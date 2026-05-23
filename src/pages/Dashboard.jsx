@@ -43,6 +43,47 @@ const DEFAULT_SECTIONS = [
   ]},
 ]
 
+const BRIDE_SECTIONS = [
+  { key:'emotional', icon:'💛', label:'Emotional Quotient', color:'#1565C0', desc:'How emotionally aware and mature is she?', questions:[
+    {k:'eq_maturity', label:'Handles conflicts calmly without getting defensive', hint:'Does she stay composed during disagreements?'},
+    {k:'eq_empathy', label:'Empathetic and understanding of your feelings', hint:'Does she listen and validate your emotions?'},
+    {k:'eq_comm', label:'Communicates openly and honestly', hint:'Does she express herself clearly and respectfully?'},
+    {k:'eq_patience', label:'Patient and non-reactive under stress', hint:'How does she behave when things go wrong?'},
+  ]},
+  { key:'family', icon:'🏠', label:'Family & Values', color:'#1976D2', desc:'Shared values, family orientation, and cultural alignment', questions:[
+    {k:'fam_values', label:'Shares similar values and life principles', hint:'Are your core beliefs aligned?'},
+    {k:'fam_compat', label:'Her family is compatible with yours', hint:'Will families get along well?'},
+    {k:'fam_respect', label:'Respectful to elders, parents, and family', hint:'How does she treat her own family?'},
+    {k:'fam_religion', label:'Religious and cultural alignment', hint:'Same practices, festivals, traditions?'},
+  ]},
+  { key:'financial', icon:'💰', label:'Career & Ambition', color:'#0277BD', desc:'Her career goals, independence, and financial mindset', questions:[
+    {k:'fin_stability', label:'Has a stable and reliable career or income', hint:'Is her professional situation secure?'},
+    {k:'fin_ambition', label:'Ambitious and has clear career or life goals', hint:'Is she working towards something meaningful?'},
+    {k:'fin_responsibl', label:'Financially responsible and independent', hint:'Does she manage money wisely?'},
+    {k:'fin_provider', label:'Comfortable with shared financial responsibilities', hint:'Open to equal financial partnership?'},
+  ]},
+  { key:'lifestyle', icon:'✈️', label:'Lifestyle & Compatibility', color:'#0288D1', desc:'Day-to-day life, hobbies, and personal habits', questions:[
+    {k:'ls_humor', label:'Has a good sense of humour and keeps things fun', hint:'Is she genuinely funny and playful?'},
+    {k:'ls_social', label:'Social life and friend circle is compatible', hint:'Do you enjoy similar social settings?'},
+    {k:'ls_travel', label:'Similar travel and adventure appetite', hint:'Does she enjoy similar activities as you?'},
+    {k:'ls_habits', label:'Healthy lifestyle habits — fitness, food, sleep', hint:'Does her daily routine match yours?'},
+  ]},
+  { key:'future', icon:'💍', label:'Future & Long-term Fit', color:'#1A237E', desc:'Alignment on marriage, children, and life goals', questions:[
+    {k:'fut_goals', label:'Aligned on life goals — where to live, lifestyle', hint:'Do your big life plans match?'},
+    {k:'fut_kids', label:'Same views on children and parenting', hint:'On the same page about family planning?'},
+    {k:'fut_respect', label:'Treats you as an equal partner', hint:'Does she genuinely respect your opinions and career?'},
+    {k:'fut_milcompat', label:'Will likely get along well with your parents', hint:'Papa and mama test 😄'},
+  ]},
+  { key:'fun', icon:'🎉', label:'Fun & Sasural Compatibility', color:'#1565C0', desc:'The fun stuff — vibes, humour, and the sasural test', questions:[
+    {k:'fun_milvibes', label:'Her mom seems sweet and not too interfering', hint:'First impressions of future MIL? Controlling or chill?'},
+    {k:'fun_milstyle', label:"Her family lifestyle is compatible with yours", hint:'Will you be able to get along with her family day-to-day?'},
+    {k:'fun_spontaneous', label:'She is spontaneous and knows how to surprise you', hint:'Random plans? Thoughtful gestures? Or predictable?'},
+    {k:'fun_boring', label:'You never feel bored around her', hint:'Is there always something to talk about?'},
+    {k:'fun_socmed', label:"Her social media presence is something you are proud of", hint:'Cringe posts? Oversharing? Or totally fine?'},
+    {k:'fun_foodie', label:'Compatible on food and lifestyle choices', hint:'Similar tastes in food, going out, staying in?'},
+  ]},
+]
+
 const KCOLS = [
   {key:'shortlisted', label:'Shortlisted', icon:'🎯', bg:'#FCE4EC', pill:'#C2185B', colBg:'#fff5f8'},
   {key:'meeting_pending', label:'Meeting pending', icon:'📅', bg:'#FFF8E1', pill:'#F57F17', colBg:'#fffdf5'},
@@ -55,15 +96,17 @@ const KCOLS = [
 const SWATCHES = ['#FCE4EC','#F8BBD0','#FFF0F5','#FFF8E1','#FFF3E0','#FAEEDA','#E8F5E9','#E0F2F1','#E3F2FD','#EDE7F6','#F3E5F5','#FBE9E7','#EFEBE9','#FFFDE7','#E8EAF6','#E0F7FA']
 const EMOJIS = ['👨‍💻','👨‍⚕️','👨‍🍳','👨‍🎨','👨‍🏫','👨‍💼','👨‍🔬','👨‍✈️','👨‍⚖️','🧔','👱','🙋','🤵','👮','👷','🌟','✨','🎯','🚀','🏆','💡','🦁','🐯','🦊','🦅','🦋','💎','👑','🎸','⚽','🏋️','🎮','📚','🎭','🌈','🍕','☕','🎻']
 
-function loadSections() {
+function loadSections(mode) {
+  const defaultSecs = mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS
   try {
-    const saved = localStorage.getItem('rishta_sections_v4')
+    const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
+    const saved = localStorage.getItem(key)
     if (saved) {
       const parsed = JSON.parse(saved)
-      return DEFAULT_SECTIONS.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
+      return defaultSecs.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
     }
   } catch(e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_SECTIONS))
+  return JSON.parse(JSON.stringify(defaultSecs))
 }
 function saveSections(secs) {
   try { localStorage.setItem('rishta_sections_v4', JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
