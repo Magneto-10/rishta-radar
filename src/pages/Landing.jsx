@@ -29,8 +29,7 @@ export default function Landing() {
       </nav>
 
       <div style={{textAlign:'center',padding:'5rem 2rem 3rem'}}>
-        <div style={{display:'inline-block',background:'#FCE4EC',color:'#C2185B',padding:'4px 16px',borderRadius:'20px',fontSize:'12px',fontWeight:'500',marginBottom:'1.5rem'}}>Free forever · No credit card needed</div>
-        <h1 style={{fontFamily:'Playfair Display,serif',fontSize:'clamp(32px,5vw,56px)',color:'#2C1810',lineHeight:1.2,maxWidth:'700px',margin:'0 auto 1.25rem'}}>
+<h1 style={{fontFamily:'Playfair Display,serif',fontSize:'clamp(32px,5vw,56px)',color:'#2C1810',lineHeight:1.2,maxWidth:'700px',margin:'0 auto 1.25rem'}}>
           The smartest way to shortlist your
           <span style={{color:'#C2185B',fontStyle:'italic'}}> perfect match</span>
         </h1>
