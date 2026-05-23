@@ -20,6 +20,7 @@ export default function Landing() {
     { q: 'Does it work on mobile?', a: 'Yes — Rishta Radar is fully responsive and works on iPhone and Android browsers. No app download needed.' },
     { q: 'Can I delete my data?', a: 'Yes, you can delete any prospect at any time. Your data stays with you and you are always in control.' },
     { q: 'Can I share my shortlist with family?', a: 'Not yet — but family sharing is on our roadmap! For now, you can show your phone or laptop to family members.' },
+    { q: 'What if I selected the wrong mode by mistake?', a: 'No worries! Go to the sidebar inside the app and click "Delete my account". Once deleted, sign in again with the same Google account — you will see the mode selection screen fresh and can pick the correct one. All it takes is 30 seconds!' },
   ]
 
   const features = [
