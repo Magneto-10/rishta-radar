@@ -129,7 +129,8 @@ export default function Dashboard({ session }) {
   const [emojiTrayOpen, setEmojiTrayOpen] = useState(false)
   const [form, setForm] = useState({})
 
-  useEffect(() => { fetchProspects() }, [fetchProspects])
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => { fetchProspects() }, [])
 
   async function fetchProspects() {
     const { data } = await supabase.from('prospects').select('*').order('created_at',{ascending:false})
