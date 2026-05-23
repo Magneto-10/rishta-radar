@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const SECTIONS = [
@@ -129,7 +129,7 @@ export default function Dashboard({ session }) {
   const [emojiTrayOpen, setEmojiTrayOpen] = useState(false)
   const [form, setForm] = useState({})
 
-  useEffect(() => { fetchProspects() }, [])
+  useEffect(() => { fetchProspects() }, [fetchProspects])
 
   async function fetchProspects() {
     const { data } = await supabase.from('prospects').select('*').order('created_at',{ascending:false})
@@ -616,7 +616,7 @@ function KanbanView({ prospects, onMove, onSelect, dragId, setDragId }) {
 
 function DetailView({ p, onParamChange, onStatusChange, onEdit, onDelete }) {
   if (!p) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Select a prospect from the card view</div>
-  const s=gsc(p),st=gsty(s),unr=isUnrated(p)
+  const s=gsc(p),unr=isUnrated(p)
   const compat = s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
   return (
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
