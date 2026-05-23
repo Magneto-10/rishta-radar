@@ -416,38 +416,57 @@ export default function Dashboard({ session }) {
         {page==='leaderboard' && (
           <div>
             <div style={{marginBottom:'1.25rem'}}><div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div></div>
-            <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
-              {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
-                const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
-                const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
-                return (
-                  <div key={p.id} style={{display:'flex',alignItems:'center',gap:'12px',padding:'16px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>
-                    <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',width:'28px',textAlign:'center',color:rc,flexShrink:0}}>{i+1}</div>
-                    <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:'15px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
-                      <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>{[p.age?p.age+'y':null,p.job,p.city].filter(Boolean).join(' · ')}</div>
-                      <div style={{marginTop:'5px',display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap'}}>
-                        {spill(p.status)}
-                        {(() => {
-                          const scored = sections.map(sec=>({sec,score:secScore(p,sec)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score)
-                          if(scored.length===0) return null
-                          const best = scored[0]
-                          const worst = scored[scored.length-1]
-                          return <>
-                            <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32'}}>💪 {best.sec.label.split(' ')[0]}: {best.score}</span>
-                            {scored.length>1 && <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#FFF8E1',color:'#F57F17'}}>⚠️ {worst.sec.label.split(' ')[0]}: {worst.score}</span>}
-                          </>
-                        })()}
-                      </div>
-                    </div>
-                    <div style={{textAlign:'center',flexShrink:0}}>
-                      <div style={{fontSize:'26px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
-                      <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'2px'}}>/100</div>
-                    </div>
+            <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
+              {(() => {
+                const mobile = window.innerWidth < 1024
+                const hdr = {fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.8px'}
+                return <>
+                  <div style={{display:'flex',alignItems:'center',gap:'12px',padding:'10px 1rem',borderBottom:'2px solid rgba(194,24,91,0.13)',background:'#FFFAF8'}}>
+                    <div style={{width:'28px',flexShrink:0}}></div>
+                    <div style={{width:'46px',flexShrink:0}}></div>
+                    <div style={{flex:1,minWidth:0,...hdr}}>Prospect</div>
+                    {!mobile && <div style={{width:'110px',flexShrink:0,...hdr}}>Location</div>}
+                    {!mobile && <div style={{width:'90px',flexShrink:0,...hdr}}>Highest</div>}
+                    {!mobile && <div style={{width:'90px',flexShrink:0,...hdr}}>Lowest</div>}
+                    <div style={{width:'52px',textAlign:'center',flexShrink:0,...hdr}}>Score</div>
                   </div>
-                )
-              })}
+                  {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
+                    const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
+                    const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
+                    const scored=sections.map(sec=>({sec,score:secScore(p,sec)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score)
+                    const best=scored.length>0?scored[0]:null
+                    const worst=scored.length>1?scored[scored.length-1]:null
+                    return (
+                      <div key={p.id} style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)',background:i%2===0?'#fff':'#FFFAF8'}}>
+                        <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',width:'28px',textAlign:'center',color:rc,flexShrink:0}}>{i+1}</div>
+                        <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontSize:'14px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
+                          <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{[p.age?p.age+'y':null,p.job].filter(Boolean).join(' · ')}</div>
+                          <div style={{marginTop:'4px'}}>{spill(p.status)}</div>
+                        </div>
+                        {!mobile && <div style={{width:'110px',flexShrink:0}}>
+                          <div style={{fontSize:'11px',color:'#7B5E6B'}}>{p.city||'—'}</div>
+                        </div>}
+                        {!mobile && <div style={{width:'90px',flexShrink:0}}>
+                          {best
+                            ? <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32',display:'inline-block'}}>⬆️ {best.sec.icon} {best.score}</span>
+                            : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
+                        </div>}
+                        {!mobile && <div style={{width:'90px',flexShrink:0}}>
+                          {worst
+                            ? <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#FFEBEE',color:'#C62828',display:'inline-block'}}>⬇️ {worst.sec.icon} {worst.score}</span>
+                            : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
+                        </div>}
+                        <div style={{width:'52px',textAlign:'center',flexShrink:0}}>
+                          <div style={{fontSize:'24px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
+                          <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'2px'}}>/100</div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </>
+              })()}
             </div>
           </div>
         )}
