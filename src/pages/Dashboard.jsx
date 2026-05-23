@@ -129,7 +129,20 @@ function HeartSlider({ value, onChange, color }) {
   )
 }
 
-export default function Dashboard({ session }) {
+export default function Dashboard({ session, mode }) {
+  const theme = mode === 'he' ? {
+    primary: '#1565C0',
+    light: '#E3F2FD',
+    rose: '#1565C0',
+    blush: '#E3F2FD',
+    accent: '#1976D2'
+  } : {
+    primary: '#C2185B',
+    light: '#FFF0F5',
+    rose: '#C2185B',
+    blush: '#FFF0F5',
+    accent: '#E91E8C'
+  }
   const [sections, setSections] = useState(loadSections)
   const [prospects, setProspects] = useState([])
   const [loading, setLoading] = useState(true)
