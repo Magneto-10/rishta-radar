@@ -319,6 +319,23 @@ export default function Dashboard({ session, mode }) {
   const stats = {total:prospects.length,shortlisted:prospects.filter(p=>p.status==='shortlisted').length,met:prospects.filter(p=>p.status==='meeting_done').length,pending:prospects.filter(p=>p.status==='meeting_pending').length,eliminated:prospects.filter(p=>p.status==='eliminated').length}
   const favourites = prospects.filter(p=>p.status==='favourite')
 
+  const familyFields = [
+    {id:'famtype',label:'Family type',opts:['','Joint family','Nuclear family','Lives alone','Joint now, plans to go nuclear','Stays with parents only']},
+    {id:'famsize',label:'Family members',opts:['','Just her (1)','2–3 members','4–5 members','6–7 members','8+ members']},
+    {id:'parents',label:'Parents situation',opts:['','Both parents with her','Parents in hometown','Single parent','Parents retired independently','Parents abroad']},
+    {id:'siblings',label:'Siblings',opts:['','Only child','1 sibling','2 siblings','3+ siblings']},
+    {id:'sibst',label:'Sibling status',opts:['','All married','Some married','All unmarried','No siblings']},
+    {id:'income',label:'Annual income',opts:['Not disclosed','Below ₹5L','₹5L – ₹10L','₹10L – ₹20L','₹20L – ₹40L','₹40L – ₹75L','₹75L – ₹1Cr','₹1Cr+']},
+    ...(mode==='he' ? [
+      {id:'careerplan',label:'Career plans after marriage',opts:['Not discussed','Will continue working','Open to discussion','Plans to take a break','Wants to be homemaker']},
+      {id:'relocate',label:'Willing to relocate?',opts:['Not discussed','Yes, fully flexible','Open to discussion','Prefers to stay in current city','Expects partner to relocate']},
+      {id:'livingarr',label:'Living arrangement',opts:['Not discussed','With in-laws','Nuclear family','Flexible / Open','Separate but nearby']},
+    ] : [
+      {id:'living',label:'Living situation',opts:['','Own property','Family home','Rented apartment','Company accommodation','Paying guest']},
+      {id:'cityplan',label:'Post-marriage city plan',opts:['','Stay in current city','Open to moving','Expects partner to relocate','Planning to move abroad','Undecided']},
+    ]),
+  ]
+
   return (
     <div style={{display:'flex',minHeight:'100vh',fontFamily:'DM Sans,sans-serif',background:'#FFFAF8'}}>
       <style>{heartCSS + mobileCSS}</style>
@@ -517,7 +534,7 @@ export default function Dashboard({ session, mode }) {
           </div>
         )}
 
-        {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} />}
+        {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} />}
         {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
       </main>
 
@@ -625,7 +642,7 @@ export default function Dashboard({ session, mode }) {
             </div>
             <div style={{fontSize:'10px',fontWeight:'500',color:'#B39DAE',letterSpacing:'.8px',textTransform:'uppercase',margin:'14px 0 8px',paddingTop:'4px',borderTop:'1px solid rgba(194,24,91,0.1)'}}>Family & Background</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-              {[{id:'famtype',label:'Family type',opts:['','Joint family','Nuclear family','Lives alone','Joint now, plans to go nuclear','Stays with parents only']},{id:'famsize',label:'Family members',opts:['','Just him (1)','2–3 members','4–5 members','6–7 members','8+ members']},{id:'parents',label:'Parents situation',opts:['','Both parents with him','Parents in hometown','Single parent','Parents retired independently','Parents abroad']},{id:'siblings',label:'Siblings',opts:['','Only child','1 sibling','2 siblings','3+ siblings']},{id:'sibst',label:'Sibling status',opts:['','All married','Some married','All unmarried','No siblings']},{id:'income',label:'Annual income',opts:['Not disclosed','Below ₹5L','₹5L – ₹10L','₹10L – ₹20L','₹20L – ₹40L','₹40L – ₹75L','₹75L – ₹1Cr','₹1Cr+']},{id:'living',label:'Living situation',opts:['','Own property','Family home','Rented apartment','Company accommodation','Paying guest']},{id:'cityplan',label:'Post-marriage city plan',opts:['','Stay in current city','Open to moving','Expects partner to relocate','Planning to move abroad','Undecided']}].map(f=>(
+              {familyFields.map(f=>(
                 <div key={f.id} style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                   <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label}</label>
                   <select value={form[f.id]||''} onChange={fi(f.id)} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
@@ -937,7 +954,7 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
 }
 
 // ── COMPARE VIEW ──────────────────────────────────────────────────────────────
-function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen }) {
+function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen, mode }) {
   const nonElim=prospects.filter(p=>p.status!=='eliminated')
   const active=prospects.filter(p=>cmpSelected.includes(p.id))
   function toggle(id){ if(cmpSelected.includes(id))setCmpSelected(cmpSelected.filter(x=>x!==id));else if(cmpSelected.length<5)setCmpSelected([...cmpSelected,id]);else alert('Max 5');setCmpQualOpen(false);setCmpQuantOpen(false) }
@@ -963,7 +980,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
           </div>
           {cmpQualOpen&&(<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
             <thead><tr style={{background:'#FFF0F5'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
-            <tbody>{[{l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},{l:'Education',fn:p=>p.edu||'—'},{l:'City',fn:p=>p.city||'—'},{l:'Height',fn:p=>p.height||'—'},{l:'Annual income',fn:p=>p.income||'Not disclosed'},{l:'Family type',fn:p=>p.famtype||'—'},{l:'Family members',fn:p=>p.famsize||'—'},{l:'Parents',fn:p=>p.parents||'—'},{l:'Living situation',fn:p=>p.living||'—'},{l:'Post-marriage plan',fn:p=>p.cityplan||'—'}].map(f=>(<tr key={f.l}><td style={{padding:'8px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#7B5E6B',fontWeight:'500'}}>{f.l}</td>{active.map(p=><td key={p.id} style={{textAlign:'center',padding:'8px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#2C1810'}}>{f.fn(p)}</td>)}</tr>))}</tbody>
+            <tbody>{[{l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},{l:'Education',fn:p=>p.edu||'—'},{l:'City',fn:p=>p.city||'—'},{l:'Height',fn:p=>p.height||'—'},{l:'Annual income',fn:p=>p.income||'Not disclosed'},{l:'Family type',fn:p=>p.famtype||'—'},{l:'Family members',fn:p=>p.famsize||'—'},{l:'Parents',fn:p=>p.parents||'—'},...(mode==='he'?[{l:'Career plans after marriage',fn:p=>p.careerplan||'—'},{l:'Willing to relocate?',fn:p=>p.relocate||'—'},{l:'Living arrangement',fn:p=>p.livingarr||'—'}]:[{l:'Living situation',fn:p=>p.living||'—'},{l:'Post-marriage plan',fn:p=>p.cityplan||'—'}])].map(f=>(<tr key={f.l}><td style={{padding:'8px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#7B5E6B',fontWeight:'500'}}>{f.l}</td>{active.map(p=><td key={p.id} style={{textAlign:'center',padding:'8px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#2C1810'}}>{f.fn(p)}</td>)}</tr>))}</tbody>
           </table></div>)}
         </div>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
