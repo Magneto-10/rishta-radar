@@ -730,7 +730,7 @@ function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst,
 // ── DETAIL VIEW ───────────────────────────────────────────────────────────────
 function DetailView({ p, sections, onParamChange, onStatusChange, onEdit, onDelete, onEditQ, onDeleteQ, onAddQ }) {
   if (!p) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Select a prospect from the card view</div>
-  const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
+  const s=gsc(p,sections),unr=isUnrated(p,sections)
   const compat=s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
   const verdict=s>=85?{bg:'#E8F5E9',c:'#2E7D32',t:`${p.name} scores really well across the board. Strong emotional maturity + family alignment + stability = a very solid foundation.`}:s>=75?{bg:'#FFF8E1',c:'#F57F17',t:`${p.name} has a lot going for him but a few areas need an honest conversation. Don't dismiss, don't commit — just keep talking.`}:{bg:'#FCE4EC',c:'#C2185B',t:`Mixed picture overall. Some genuinely good qualities but meaningful gaps. Meet once more casually before deciding.`}
 
