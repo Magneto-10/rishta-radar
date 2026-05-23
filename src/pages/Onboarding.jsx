@@ -28,18 +28,18 @@ export default function Onboarding({ session, onComplete }) {
             style={{padding:'2rem 1rem',borderRadius:'16px',border:'2px solid rgba(194,24,91,0.2)',background:'#fff',cursor:'pointer',transition:'all .2s',fontFamily:'DM Sans,sans-serif'}}
             onMouseEnter={e=>{e.currentTarget.style.border='2px solid #C2185B';e.currentTarget.style.background='#FFF0F5'}}
             onMouseLeave={e=>{e.currentTarget.style.border='2px solid rgba(194,24,91,0.2)';e.currentTarget.style.background='#fff'}}>
-            <div style={{fontSize:'40px',marginBottom:'12px'}}>👰</div>
-            <div style={{fontSize:'15px',fontWeight:'500',color:'#C2185B',marginBottom:'6px'}}>Looking for a Groom</div>
-            <div style={{fontSize:'12px',color:'#7B5E6B',lineHeight:1.5}}>I want to track and rate groom prospects</div>
+            <div style={{fontSize:'40px',marginBottom:'12px'}}>💗</div>
+            <div style={{fontSize:'15px',fontWeight:'500',color:'#C2185B',marginBottom:'6px'}}>I'm a Bride-to-be</div>
+            <div style={{fontSize:'12px',color:'#7B5E6B',lineHeight:1.5}}>Track, rate and compare your groom prospects</div>
           </button>
 
           <button onClick={()=>selectMode('he')} disabled={loading}
             style={{padding:'2rem 1rem',borderRadius:'16px',border:'2px solid rgba(21,101,192,0.2)',background:'#fff',cursor:'pointer',transition:'all .2s',fontFamily:'DM Sans,sans-serif'}}
             onMouseEnter={e=>{e.currentTarget.style.border='2px solid #1565C0';e.currentTarget.style.background='#E3F2FD'}}
             onMouseLeave={e=>{e.currentTarget.style.border='2px solid rgba(21,101,192,0.2)';e.currentTarget.style.background='#fff'}}>
-            <div style={{fontSize:'40px',marginBottom:'12px'}}>🤵</div>
-            <div style={{fontSize:'15px',fontWeight:'500',color:'#1565C0',marginBottom:'6px'}}>Looking for a Bride</div>
-            <div style={{fontSize:'12px',color:'#7B5E6B',lineHeight:1.5}}>I want to track and rate bride prospects</div>
+            <div style={{fontSize:'40px',marginBottom:'12px'}}>💙</div>
+            <div style={{fontSize:'15px',fontWeight:'500',color:'#1565C0',marginBottom:'6px'}}>I'm a Groom-to-be</div>
+            <div style={{fontSize:'12px',color:'#7B5E6B',lineHeight:1.5}}>Track, rate and compare your bride prospects</div>
           </button>
         </div>
 
