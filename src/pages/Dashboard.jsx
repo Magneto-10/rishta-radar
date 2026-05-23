@@ -415,57 +415,48 @@ export default function Dashboard({ session }) {
         {/* LEADERBOARD */}
         {page==='leaderboard' && (
           <div>
-            <div style={{marginBottom:'1.25rem'}}><div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div></div>
+            <div style={{marginBottom:'1.25rem'}}>
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div>
+              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Ranked by overall groom score</div>
+            </div>
             <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
-              {(() => {
-                const SEC_SHORT = {emotional:'EQ',family:'Family',financial:'Finance',lifestyle:'Lifestyle',future:'Future',fun:'Fun'}
-                const shortName = sec => SEC_SHORT[sec.key] || sec.label.split(' ')[0]
-                const gridStyle = {display:'grid',gridTemplateColumns:'28px 46px 2fr 1.2fr 1.2fr 70px',gap:'0 12px',alignItems:'center',padding:'0 1rem'}
-                const hdr = {fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.8px'}
-                return <>
-                  <div style={{...gridStyle,paddingTop:'10px',paddingBottom:'10px',borderBottom:'2px solid rgba(194,24,91,0.13)',background:'#FFFAF8'}}>
-                    <div></div>
-                    <div></div>
-                    <div style={hdr}>Prospect</div>
-                    <div style={hdr}>Highest</div>
-                    <div style={hdr}>Lowest</div>
-                    <div style={{...hdr,textAlign:'center'}}>Score</div>
+              <div style={{display:'grid',gridTemplateColumns:'28px 46px 1fr 90px 90px 65px',gap:'10px',alignItems:'center',padding:'8px 1rem',background:'#FFF0F5',borderBottom:'2px solid rgba(194,24,91,0.13)'}}>
+                <div></div>
+                <div></div>
+                <div style={{fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px'}}>Prospect</div>
+                <div style={{fontSize:'10px',fontWeight:'500',color:'#2E7D32',textTransform:'uppercase',letterSpacing:'.5px'}}>Highest</div>
+                <div style={{fontSize:'10px',fontWeight:'500',color:'#C62828',textTransform:'uppercase',letterSpacing:'.5px'}}>Lowest</div>
+                <div style={{fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',textAlign:'right'}}>Score</div>
+              </div>
+              {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
+                const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
+                const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
+                const secNames={emotional:'EQ',family:'Family',financial:'Finance',lifestyle:'Lifestyle',future:'Future',fun:'Fun'}
+                const scored=sections.map(sec=>({name:secNames[sec.key]||sec.key,score:secScore(p,sec)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score)
+                const best=scored[0]
+                const worst=scored[scored.length-1]
+                return (
+                  <div key={p.id} style={{display:'grid',gridTemplateColumns:'28px 46px 1fr 90px 90px 65px',gap:'10px',alignItems:'center',padding:'14px 1rem',borderBottom:'1px solid rgba(194,24,91,0.08)',background:i%2===0?'#fff':'#FFFAF8'}}>
+                    <div style={{fontFamily:'Playfair Display,serif',fontSize:'16px',color:rc,textAlign:'center',fontWeight:'600'}}>{i+1}</div>
+                    <div style={{fontSize:'22px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
+                    <div>
+                      <div style={{fontSize:'13px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
+                      <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{[p.age?p.age+'y':null,p.job,p.city].filter(Boolean).join(' · ')}</div>
+                      <div style={{marginTop:'4px'}}>{spill(p.status)}</div>
+                    </div>
+                    <div style={{textAlign:'center'}}>
+                      {best ? <span style={{fontSize:'12px',fontWeight:'500',padding:'3px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32',display:'inline-block'}}>{best.name}: {best.score}</span> : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
+                    </div>
+                    <div style={{textAlign:'center'}}>
+                      {worst && worst!==best ? <span style={{fontSize:'12px',fontWeight:'500',padding:'3px 8px',borderRadius:'8px',background:'#FFEBEE',color:'#C62828',display:'inline-block'}}>{worst.name}: {worst.score}</span> : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
+                    </div>
+                    <div style={{textAlign:'right'}}>
+                      <div style={{fontSize:'22px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
+                      <div style={{fontSize:'9px',color:'#B39DAE'}}>/100</div>
+                    </div>
                   </div>
-                  {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
-                    const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
-                    const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
-                    const scored=sections.map(sec=>({sec,score:secScore(p,sec)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score)
-                    const best=scored.length>0?scored[0]:null
-                    const worst=scored.length>1?scored[scored.length-1]:null
-                    return (
-                      <div key={p.id} style={{...gridStyle,paddingTop:'14px',paddingBottom:'14px',borderBottom:'1px solid rgba(194,24,91,0.1)',background:i%2===0?'#fff':'#FFFAF8'}}>
-                        <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',textAlign:'center',color:rc}}>{i+1}</div>
-                        <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center'}}>{p.emoji}</div>
-                        <div style={{minWidth:0}}>
-                          <div style={{fontSize:'14px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
-                          <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{[p.age?p.age+'y':null,p.job].filter(Boolean).join(' · ')}</div>
-                          {p.city && <div style={{fontSize:'11px',color:'#B39DAE',marginTop:'1px'}}>{p.city}</div>}
-                          <div style={{marginTop:'5px'}}>{spill(p.status)}</div>
-                        </div>
-                        <div>
-                          {best
-                            ? <span style={{fontSize:'11px',padding:'3px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32',display:'inline-block',whiteSpace:'nowrap'}}>{shortName(best.sec)}: {best.score}</span>
-                            : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
-                        </div>
-                        <div>
-                          {worst
-                            ? <span style={{fontSize:'11px',padding:'3px 8px',borderRadius:'8px',background:'#FFEBEE',color:'#C62828',display:'inline-block',whiteSpace:'nowrap'}}>{shortName(worst.sec)}: {worst.score}</span>
-                            : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
-                        </div>
-                        <div style={{textAlign:'center'}}>
-                          <div style={{fontSize:'24px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
-                          <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'2px'}}>/100</div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </>
-              })()}
+                )
+              })}
             </div>
           </div>
         )}
