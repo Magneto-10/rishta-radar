@@ -518,7 +518,7 @@ export default function Dashboard({ session, mode }) {
         )}
 
         {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} />}
-        {page==='funzone' && <FunZone prospects={prospects} sections={sections} />}
+        {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
       </main>
 
       {/* FAV SUMMARY MODAL */}
@@ -985,38 +985,83 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
 }
 
 // ── FUN ZONE ──────────────────────────────────────────────────────────────────
-function FunZone({ prospects, sections }) {
+function FunZone({ prospects, sections, mode }) {
   if(!prospects.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Add some prospects first!</div>
   const active=prospects.filter(p=>p.status!=='eliminated')
   if(!active.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>All eliminated! Add more.</div>
+  
+  const primary = mode==='he' ? '#1565C0' : '#C2185B'
   const fns=(arr,sec)=>[...arr].sort((a,b)=>secScore(b,sec)-secScore(a,sec))[0]
   const secEQ=sections[0],secFam=sections[1],secFin=sections[2],secLS=sections[3],secFut=sections[4],secFun=sections[5]||sections[0]
+  
   function milScore(p){return Math.round((secScore(p,secFun)+secScore(p,secFam))/2)}
+  function haeScore(p){return Math.round((secScore(p,secEQ)+secScore(p,secFam))/2)}
+  function trophyScore(p){return Math.round((secScore(p,secFin)+secScore(p,secFut))/2)}
+  function dreamScore(p){return Math.round((secScore(p,secFut)+secScore(p,secFin)+secScore(p,secEQ))/3)}
+  
   const milSorted=[...active].sort((a,b)=>milScore(b)-milScore(a))
-  const milChamp=milSorted[0],milWorst=milSorted[milSorted.length-1]
+  const milChamp=milSorted[0]
+  const milWorst=milSorted[milSorted.length-1]
   const top=[...active].sort((a,b)=>gsc(b,sections)-gsc(a,sections))[0]
   const igWinner=[...prospects].sort((a,b)=>secScore(b,secLS)-secScore(a,secLS))[0]
-  const heaWinner=[...prospects].sort((a,b)=>(secScore(b,secEQ)+secScore(b,secFam))-(secScore(a,secEQ)+secScore(a,secFam)))[0]
-  const trophyWinner=[...prospects].sort((a,b)=>(secScore(b,secFin)+secScore(b,secFut))-(secScore(a,secFin)+secScore(a,secFut)))[0]
+  const haeWinner=[...prospects].sort((a,b)=>haeScore(b)-haeScore(a))[0]
+  const trophyWinner=[...prospects].sort((a,b)=>trophyScore(b)-trophyScore(a))[0]
+  const dreamWinner=[...prospects].sort((a,b)=>dreamScore(b)-dreamScore(a))[0]
   const funWinner=fns(prospects,secFun)
-  const zodiacs={Aries:'♈',Taurus:'♉',Gemini:'♊',Cancer:'♋',Leo:'♌',Virgo:'♍',Libra:'♎',Scorpio:'♏',Sagittarius:'♐',Capricorn:'♑',Aquarius:'♒',Pisces:'♓'}
-  const funCards=[
-    {ic:'👑',t:'Top pick right now',p:top,sub:`Score: ${gsc(top,sections)}/100`},
-    {ic:'😅',t:"MIL's favourite",p:milChamp,sub:`MIL score: ${milScore(milChamp)}/100`},
-    {ic:'💛',t:'Most emotionally mature',p:fns(prospects,secEQ),sub:'Emotional Quotient section'},
-    {ic:'🏠',t:'Best family values',p:fns(prospects,secFam),sub:'Family & Values section'},
-    {ic:'💸',t:'Most financially sorted',p:fns(prospects,secFin),sub:'Financial & Career section'},
-    {ic:'📸',t:'Best Instagram husband',p:igWinner,sub:`Lifestyle score: ${secScore(igWinner,secLS)}/100`},
-    {ic:'🌹',t:'Happily ever after',p:heaWinner,sub:'EQ + Family sections'},
-    {ic:'🏆',t:'Trophy husband',p:trophyWinner,sub:'Finance + Future sections'},
-    {ic:'🎉',t:'Most fun to be around',p:funWinner,sub:`Fun score: ${secScore(funWinner,secFun)}/100`},
+  
+  const sheModeCards=[
+    {ic:'👑',t:'Top pick right now',p:top,sub:`Overall score: ${gsc(top,sections)}/100`,formula:'Highest overall score across all sections'},
+    {ic:'😅',t:"MIL's favourite",p:milChamp,sub:`MIL score: ${milScore(milChamp)}/100`,formula:'(Fun & MIL + Family & Values) ÷ 2'},
+    {ic:'💛',t:'Most emotionally mature',p:fns(prospects,secEQ),sub:`EQ score: ${secScore(fns(prospects,secEQ),secEQ)}/100`,formula:'Highest Emotional Quotient section score'},
+    {ic:'🏠',t:'Best family values',p:fns(prospects,secFam),sub:`Family score: ${secScore(fns(prospects,secFam),secFam)}/100`,formula:'Highest Family & Values section score'},
+    {ic:'💸',t:'Most financially sorted',p:fns(prospects,secFin),sub:`Finance score: ${secScore(fns(prospects,secFin),secFin)}/100`,formula:'Highest Financial & Career section score'},
+    {ic:'📸',t:'Best Instagram husband',p:igWinner,sub:`Lifestyle score: ${secScore(igWinner,secLS)}/100`,formula:'Highest Lifestyle & Compatibility section score'},
+    {ic:'🌹',t:'Happily ever after',p:haeWinner,sub:`HAE score: ${haeScore(haeWinner)}/100`,formula:'(Emotional Quotient + Family & Values) ÷ 2'},
+    {ic:'🏆',t:'Trophy husband',p:trophyWinner,sub:`Trophy score: ${trophyScore(trophyWinner)}/100`,formula:'(Financial & Career + Future & Long-term Fit) ÷ 2'},
+    {ic:'🎉',t:'Most fun to be around',p:funWinner,sub:`Fun score: ${secScore(funWinner,secFun)}/100`,formula:'Highest Fun & MIL Compatibility section score'},
   ]
+  
+  const heModeCards=[
+    {ic:'👑',t:'Top pick right now',p:top,sub:`Overall score: ${gsc(top,sections)}/100`,formula:'Highest overall score across all sections'},
+    {ic:'😅',t:"Sasural's favourite",p:milChamp,sub:`Sasural score: ${milScore(milChamp)}/100`,formula:'(Fun & Sasural + Family & Values) ÷ 2'},
+    {ic:'💛',t:'Most emotionally mature',p:fns(prospects,secEQ),sub:`EQ score: ${secScore(fns(prospects,secEQ),secEQ)}/100`,formula:'Highest Emotional Quotient section score'},
+    {ic:'🏠',t:'Best family values',p:fns(prospects,secFam),sub:`Family score: ${secScore(fns(prospects,secFam),secFam)}/100`,formula:'Highest Family & Values section score'},
+    {ic:'💼',t:'Most career driven',p:fns(prospects,secFin),sub:`Career score: ${secScore(fns(prospects,secFin),secFin)}/100`,formula:'Highest Career & Ambition section score'},
+    {ic:'📸',t:'Best Instagram wife',p:igWinner,sub:`Lifestyle score: ${secScore(igWinner,secLS)}/100`,formula:'Highest Lifestyle & Compatibility section score'},
+    {ic:'🌹',t:'Happily ever after',p:haeWinner,sub:`HAE score: ${haeScore(haeWinner)}/100`,formula:'(Emotional Quotient + Family & Values) ÷ 2'},
+    {ic:'💎',t:'Dream bride',p:dreamWinner,sub:`Dream score: ${dreamScore(dreamWinner)}/100`,formula:'(Future & Long-term Fit + Career & Ambition + Emotional Quotient) ÷ 3'},
+    {ic:'🎉',t:'Most fun to be around',p:funWinner,sub:`Fun score: ${secScore(funWinner,secFun)}/100`,formula:'Highest Fun & Sasural Compatibility section score'},
+  ]
+  
+  const funCards = mode==='he' ? heModeCards : sheModeCards
+  const milLabel = mode==='he' ? 'Sasural Compatibility' : 'MIL Compatibility'
+  const milIcon = mode==='he' ? '🏡' : '😅'
+  
+  const zodiacs={Aries:'♈',Taurus:'♉',Gemini:'♊',Cancer:'♋',Leo:'♌',Virgo:'♍',Libra:'♎',Scorpio:'♏',Sagittarius:'♐',Capricorn:'♑',Aquarius:'♒',Pisces:'♓'}
+  
+  const [hoveredCard, setHoveredCard] = React.useState(null)
+  
   return (
     <div>
-      <div style={{marginBottom:'1.25rem'}}><div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>✨ Fun Zone</div><div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Because picking a husband should have some drama</div></div>
+      <div style={{marginBottom:'1.25rem'}}>
+        <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>✨ Fun Zone</div>
+        <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>
+          {mode==='he' ? 'Because picking a wife should have some drama' : 'Because picking a husband should have some drama'}
+        </div>
+      </div>
+      
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(170px,1fr))',gap:'12px',marginBottom:'1.25rem'}}>
         {funCards.map((x,i)=>(
-          <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
+          <div key={i} 
+            style={{background:'#fff',border:`1px solid ${hoveredCard===i?primary:'rgba(194,24,91,0.13)'}`,borderRadius:'16px',padding:'1.1rem',position:'relative',cursor:'default',transition:'border .2s'}}
+            onMouseEnter={()=>setHoveredCard(i)}
+            onMouseLeave={()=>setHoveredCard(null)}>
+            {hoveredCard===i && (
+              <div style={{position:'absolute',bottom:'calc(100% + 8px)',left:'50%',transform:'translateX(-50%)',background:'#2C1810',color:'#fff',fontSize:'11px',padding:'8px 12px',borderRadius:'9px',width:'200px',textAlign:'center',zIndex:10,lineHeight:1.5,pointerEvents:'none'}}>
+                📊 {x.formula}
+                <div style={{position:'absolute',top:'100%',left:'50%',transform:'translateX(-50%)',border:'5px solid transparent',borderTopColor:'#2C1810'}}></div>
+              </div>
+            )}
             <div style={{fontSize:'12px',fontWeight:'500',color:'#2C1810',marginBottom:'.6rem',display:'flex',alignItems:'center',gap:'6px'}}><span>{x.ic}</span>{x.t}</div>
             <div style={{fontSize:'26px',marginBottom:'3px'}}>{x.p.emoji}</div>
             <div style={{fontSize:'14px',fontWeight:'500'}}>{x.p.name}</div>
@@ -1024,9 +1069,10 @@ function FunZone({ prospects, sections }) {
           </div>
         ))}
       </div>
+      
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px',marginBottom:'1.25rem'}}>
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
-          <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>😅 MIL Compatibility Meter</div>
+          <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>{milIcon} {milLabel} Meter</div>
           {milSorted.map(p=>{const v=milScore(p),c=v>=80?'#4CAF50':v>=65?'#FF9800':'#F44336',em=v>=80?'😍':v>=65?'🙂':'😬';return(
             <div key={p.id} style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'7px'}}>
               <div style={{fontSize:'11px',color:'#7B5E6B',width:'110px',flexShrink:0}}>{p.emoji} {p.name}</div>
@@ -1036,21 +1082,28 @@ function FunZone({ prospects, sections }) {
             </div>
           )})}
           <div style={{marginTop:'10px',display:'flex',gap:'8px',flexWrap:'wrap'}}>
-            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 Mammi's pick: {milChamp.name}</span>
+            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 {mode==='he'?'Sasural':'Mammi'}'s pick: {milChamp.name}</span>
             {milSorted.length>1&&<span style={{fontSize:'11px',background:'#FFEBEE',color:'#C62828',padding:'3px 10px',borderRadius:'8px'}}>😬 Toughest sell: {milWorst.name}</span>}
           </div>
+          <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'8px'}}>Formula: (Fun & {mode==='he'?'Sasural':'MIL'} + Family & Values) ÷ 2</div>
         </div>
+        
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>🏆 Section Champions</div>
           {sections.map(sec=>{const winner=fns(prospects,sec),score=secScore(winner,sec);return(
             <div key={sec.key} style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'9px'}}>
               <span style={{fontSize:'18px'}}>{sec.icon}</span>
-              <div style={{flex:1}}><div style={{fontSize:'11px',color:'#7B5E6B'}}>{sec.label}</div><div style={{fontSize:'12px',fontWeight:'500'}}>{winner.emoji} {winner.name}</div></div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:'11px',color:'#7B5E6B'}}>{sec.label}</div>
+                <div style={{fontSize:'12px',fontWeight:'500'}}>{winner.emoji} {winner.name}</div>
+              </div>
               <span style={{fontSize:'11px',fontWeight:'600',padding:'2px 8px',borderRadius:'8px',background:sec.color+'22',color:sec.color}}>{score}</span>
             </div>
           )})}
+          <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'4px'}}>Formula: Highest score in each section</div>
         </div>
       </div>
+      
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>♾️ Zodiac Vibes</div>
