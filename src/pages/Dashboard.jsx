@@ -708,9 +708,9 @@ function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, is
 
 // ── NOTES BOX ─────────────────────────────────────────────────────────────────
 function NotesBox({ p, onSave }) {
-  const [text, setText] = useState(p.notes||'')
-  const [dirty, setDirty] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [text, setText] = React.useState(p.notes||'')
+  const [dirty, setDirty] = React.useState(false)
+  const [saved, setSaved] = React.useState(false)
 
   function handleChange(e) {
     setText(e.target.value)
@@ -722,15 +722,7 @@ function NotesBox({ p, onSave }) {
     await onSave(p.id, text)
     setDirty(false)
     setSaved(true)
-    setTimeout(()=>setSaved(false), 2000)
-  }
-
-  function handleKeyDown(e) {
-    // Ctrl+Enter or Cmd+Enter to save
-    if ((e.ctrlKey || e.metaKey) && e.key==='Enter') {
-      e.preventDefault()
-      handleSave()
-    }
+    setTimeout(()=>setSaved(false), 2500)
   }
 
   return (
@@ -739,17 +731,17 @@ function NotesBox({ p, onSave }) {
       <textarea
         value={text}
         onChange={handleChange}
-        onKeyDown={handleKeyDown}
+        onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();handleSave()}}}
         placeholder="Gut feeling, what mammi said, vibes from meeting..."
-        style={{width:'100%',padding:'9px',border:`1px solid ${dirty?'#C2185B':'rgba(194,24,91,0.13)'}`,borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',resize:'vertical',background:'#FFF0F5',minHeight:'80px',lineHeight:1.6,outline:'none',transition:'border .15s'}}
+        style={{width:'100%',padding:'9px',border:`1px solid ${dirty?'#C2185B':'rgba(194,24,91,0.13)'}`,borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',resize:'vertical',background:'#FFF0F5',minHeight:'80px',lineHeight:1.6,outline:'none',transition:'border .15s',boxSizing:'border-box'}}
       />
-      <div style={{display:'flex',alignItems:'center',gap:'8px',marginTop:'6px'}}>
-        <button onClick={handleSave} disabled={!dirty}
-          style={{padding:'6px 16px',borderRadius:'18px',fontSize:'12px',cursor:dirty?'pointer':'not-allowed',border:'none',background:dirty?'#C2185B':'#f5e6ec',color:dirty?'#fff':'#B39DAE',fontFamily:'DM Sans,sans-serif',fontWeight:'500',transition:'all .15s'}}>
-          💾 Save notes
+      <div style={{marginTop:'6px'}}>
+        <button
+          onClick={handleSave}
+          disabled={!dirty}
+          style={{padding:'5px 14px',borderRadius:'18px',fontSize:'12px',border:'none',background:dirty?'#C2185B':'#f5e6ec',color:dirty?'#fff':'#B39DAE',fontFamily:'DM Sans,sans-serif',fontWeight:'500',cursor:dirty?'pointer':'not-allowed',transition:'all .15s'}}>
+          {saved ? '✓ Saved!' : '✓ Save'}
         </button>
-        {saved && <span style={{fontSize:'11px',color:'#2E7D32'}}>✓ Saved!</span>}
-        {dirty && !saved && <span style={{fontSize:'11px',color:'#B39DAE'}}>Unsaved changes · Cmd+Enter to save</span>}
       </div>
     </div>
   )
