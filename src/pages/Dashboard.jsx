@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
-const SECTIONS = [
+// ── SECTIONS ─────────────────────────────────────────────────────────────────
+const DEFAULT_SECTIONS = [
   {
     key:'emotional', icon:'💛', label:'Emotional Quotient',
     color:'#AD1457', desc:'How emotionally aware and mature is he?',
@@ -66,6 +67,21 @@ const SECTIONS = [
   },
 ]
 
+function loadSections() {
+  try {
+    const saved = localStorage.getItem('rishta_sections_v4')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      return DEFAULT_SECTIONS.map((sec, i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
+    }
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_SECTIONS))
+}
+
+function saveSections(secs) {
+  try { localStorage.setItem('rishta_sections_v4', JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
+}
+
 const KCOLS = [
   {key:'shortlisted', label:'Shortlisted', icon:'🎯', bg:'#FCE4EC', pill:'#C2185B', colBg:'#fff5f8'},
   {key:'meeting_pending', label:'Meeting pending', icon:'📅', bg:'#FFF8E1', pill:'#F57F17', colBg:'#fffdf5'},
@@ -78,6 +94,7 @@ const KCOLS = [
 const SWATCHES = ['#FCE4EC','#F8BBD0','#FFF0F5','#FFF8E1','#FFF3E0','#FAEEDA','#E8F5E9','#E0F2F1','#E3F2FD','#EDE7F6','#F3E5F5','#FBE9E7','#EFEBE9','#FFFDE7','#E8EAF6','#E0F7FA']
 const EMOJIS = ['👨‍💻','👨‍⚕️','👨‍🍳','👨‍🎨','👨‍🏫','👨‍💼','👨‍🔬','👨‍✈️','👨‍⚖️','🧔','👱','🙋','🤵','👮','👷','🌟','✨','🎯','🚀','🏆','💡','🦁','🐯','🦊','🦅','🦋','💎','👑','🎸','⚽','🏋️','🎮','📚','🎭','🌈','🍕','☕','🎻']
 
+// ── HELPERS ──────────────────────────────────────────────────────────────────
 function spill(st) {
   const m = {
     shortlisted:{l:'Shortlisted',bg:'#FCE4EC',c:'#C2185B'},
@@ -96,8 +113,8 @@ function secScore(p, sec) {
   return Math.round(vals.reduce((a,b)=>a+b,0) / vals.length)
 }
 
-function gsc(p) {
-  const allVals = SECTIONS.flatMap(sec => sec.questions.map(q => (p.params||{})[q.k] || 0))
+function gsc(p, sections) {
+  const allVals = sections.flatMap(sec => sec.questions.map(q => (p.params||{})[q.k] || 0))
   return Math.round(allVals.reduce((a,b)=>a+b,0) / allVals.length)
 }
 
@@ -105,15 +122,76 @@ function gsty(s) {
   return s>=82?{bg:'#E8F5E9',col:'#2E7D32'}:s>=70?{bg:'#FFF8E1',col:'#F57F17'}:{bg:'#FFEBEE',col:'#C62828'}
 }
 
-function isUnrated(p) {
-  return SECTIONS.flatMap(s=>s.questions).every(q=>!(p.params||{})[q.k])
+function isUnrated(p, sections) {
+  return sections.flatMap(s=>s.questions).every(q=>!(p.params||{})[q.k])
 }
 
-function defaultParams() {
-  return Object.fromEntries(SECTIONS.flatMap(s=>s.questions).map(q=>[q.k,0]))
+function defaultParams(sections) {
+  return Object.fromEntries(sections.flatMap(s=>s.questions).map(q=>[q.k,0]))
 }
 
+// ── HEART SLIDER STYLE ───────────────────────────────────────────────────────
+const heartThumb = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23C2185B' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E")`
+
+const sliderStyle = {
+  WebkitAppearance: 'none',
+  appearance: 'none',
+  width: '100%',
+  height: '4px',
+  borderRadius: '2px',
+  outline: 'none',
+  cursor: 'pointer',
+}
+
+function HeartSlider({ value, onChange, color }) {
+  const pct = Math.round((value / 100) * 100)
+  const bg = `linear-gradient(to right, ${color||'#C2185B'} ${pct}%, #f5e6ec ${pct}%)`
+
+  return (
+    <input
+      type="range" min="0" max="100" step="1"
+      value={value}
+      onChange={onChange}
+      style={{
+        ...sliderStyle,
+        background: bg,
+      }}
+    />
+  )
+}
+
+// inject global CSS for heart thumb
+const heartCSS = `
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px;
+  background: transparent;
+  cursor: pointer;
+  margin-top: -10px;
+  background-image: ${heartThumb};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px;
+}
+input[type=range]::-moz-range-thumb {
+  width: 24px; height: 24px;
+  border: none; border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  background-image: ${heartThumb};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px;
+}
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; }
+.q-edit-btn { font-size: 14px; cursor: pointer; opacity: 0; margin-left: 6px; transition: opacity .15s; vertical-align: middle; padding: 2px 5px; border-radius: 5px; line-height: 1; }
+.q-edit-btn:hover { background: #FCE4EC; }
+.q-row:hover .q-edit-btn { opacity: 1; }
+`
+
+// ── MAIN DASHBOARD ────────────────────────────────────────────────────────────
 export default function Dashboard({ session }) {
+  const [sections, setSections] = useState(loadSections)
   const [prospects, setProspects] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState('overview')
@@ -129,14 +207,46 @@ export default function Dashboard({ session }) {
   const [emojiTrayOpen, setEmojiTrayOpen] = useState(false)
   const [form, setForm] = useState({})
 
- // eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => { fetchProspects() }, [])
-
-  async function fetchProspects() {
+  const fetchProspects = useCallback(async () => {
     const { data } = await supabase.from('prospects').select('*').order('created_at',{ascending:false})
     setProspects(data || [])
     setLoading(false)
     if (data && data.length > 0 && !selId) setSelId(data[0].id)
+  }, [selId])
+
+  useEffect(() => { fetchProspects() }, []) // eslint-disable-line
+
+  // Section management
+  function updateSections(newSecs) {
+    setSections(newSecs)
+    saveSections(newSecs)
+  }
+
+  function editQLabel(si, qi) {
+    const current = sections[si].questions[qi].label
+    const newLabel = window.prompt('Edit question text:', current)
+    if (newLabel && newLabel.trim() && newLabel.trim() !== current) {
+      const newSecs = sections.map((s,i) => i===si ? {...s, questions: s.questions.map((q,j)=>j===qi?{...q,label:newLabel.trim()}:q)} : s)
+      updateSections(newSecs)
+    }
+  }
+
+  function deleteQ(si, qi) {
+    if (sections[si].questions.length <= 2) { alert('Each section needs at least 2 questions.'); return }
+    if (!window.confirm('Delete this question?')) return
+    const newSecs = sections.map((s,i) => i===si ? {...s, questions: s.questions.filter((_,j)=>j!==qi)} : s)
+    updateSections(newSecs)
+  }
+
+  function addQ(si) {
+    const label = window.prompt('Enter your new question:', 'e.g. He is kind to strangers')
+    if (!label || !label.trim()) return
+    const hint = window.prompt('Add a short hint (optional):', 'e.g. How does he treat waitstaff?') || ''
+    const k = `custom_${si}_${Date.now()}`
+    const newSecs = sections.map((s,i) => i===si ? {...s, questions:[...s.questions,{k,label:label.trim(),hint:hint.trim()}]} : s)
+    updateSections(newSecs)
+    // give all prospects default 0 for new key
+    setProspects(prev => prev.map(p => ({...p, params:{...(p.params||{}), [k]:0}})))
   }
 
   async function saveProspect() {
@@ -156,7 +266,7 @@ useEffect(() => { fetchProspects() }, [])
       parents: form.parents||'', siblings: form.siblings||'',
       sibst: form.sibst||'', income: form.income||'',
       living: form.living||'', cityplan: form.cityplan||'',
-      params: editProspect ? editProspect.params : defaultParams()
+      params: editProspect ? editProspect.params : defaultParams(sections)
     }
     if (editProspect) {
       await supabase.from('prospects').update(payload).eq('id', editProspect.id)
@@ -164,9 +274,7 @@ useEffect(() => { fetchProspects() }, [])
       const { data } = await supabase.from('prospects').insert(payload).select()
       if (data && data[0]) setSelId(data[0].id)
     }
-    setShowModal(false)
-    setEditProspect(null)
-    setForm({})
+    setShowModal(false); setEditProspect(null); setForm({})
     fetchProspects()
   }
 
@@ -179,27 +287,25 @@ useEffect(() => { fetchProspects() }, [])
 
   async function updateStatus(id, status) {
     await supabase.from('prospects').update({status}).eq('id', id)
-    fetchProspects()
+    setProspects(prev => prev.map(p => p.id===id ? {...p,status} : p))
   }
 
   async function updateParam(id, key, val) {
     const p = prospects.find(x=>x.id===id)
     if (!p) return
     const params = {...(p.params||{}), [key]: parseInt(val)}
+    setProspects(prev => prev.map(x => x.id===id ? {...x,params} : x))
     await supabase.from('prospects').update({params}).eq('id', id)
-    setProspects(prev => prev.map(x => x.id===id ? {...x, params} : x))
   }
 
   async function updateNote(id, notes) {
     await supabase.from('prospects').update({notes}).eq('id', id)
-    setProspects(prev => prev.map(x => x.id===id ? {...x, notes} : x))
   }
 
   function openAdd() {
     setEditProspect(null)
     setForm({color:'#FCE4EC', emoji:'👤', status:'shortlisted', zodiac:'Aries'})
-    setShowModal(true)
-    setEmojiTrayOpen(false)
+    setShowModal(true); setEmojiTrayOpen(false)
   }
 
   function openEdit(p) {
@@ -214,19 +320,12 @@ useEffect(() => { fetchProspects() }, [])
       siblings:p.siblings||'', sibst:p.sibst||'', income:p.income||'',
       living:p.living||'', cityplan:p.cityplan||''
     })
-    setShowModal(true)
-    setEmojiTrayOpen(false)
+    setShowModal(true); setEmojiTrayOpen(false)
   }
 
-  function selAndView(id) {
-    setSelId(id)
-    setOvTab('detail')
-    setPage('overview')
-  }
-
-  const selP = prospects.find(x=>x.id===selId)
-
+  function selAndView(id) { setSelId(id); setOvTab('detail'); setPage('overview') }
   const fi = (id) => (e) => setForm(f=>({...f,[id]:e.target.value}))
+  const selP = prospects.find(x=>x.id===selId)
 
   if (loading) return (
     <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#FFF0F5',fontFamily:'DM Sans,sans-serif'}}>
@@ -238,15 +337,16 @@ useEffect(() => { fetchProspects() }, [])
   )
 
   const stats = {
-    total: prospects.length,
-    shortlisted: prospects.filter(p=>p.status==='shortlisted').length,
-    met: prospects.filter(p=>p.status==='meeting_done').length,
-    pending: prospects.filter(p=>p.status==='meeting_pending').length,
-    eliminated: prospects.filter(p=>p.status==='eliminated').length,
+    total:prospects.length,
+    shortlisted:prospects.filter(p=>p.status==='shortlisted').length,
+    met:prospects.filter(p=>p.status==='meeting_done').length,
+    pending:prospects.filter(p=>p.status==='meeting_pending').length,
+    eliminated:prospects.filter(p=>p.status==='eliminated').length,
   }
 
   return (
     <div style={{display:'flex',minHeight:'100vh',fontFamily:'DM Sans,sans-serif',background:'#FFFAF8'}}>
+      <style>{heartCSS}</style>
 
       {/* SIDEBAR */}
       <aside style={{width:'240px',minWidth:'240px',background:'linear-gradient(160deg,#fff0f5,#fff8f0)',borderRight:'1px solid rgba(194,24,91,0.13)',display:'flex',flexDirection:'column',position:'sticky',top:0,height:'100vh',overflowY:'auto'}}>
@@ -270,7 +370,7 @@ useEffect(() => { fetchProspects() }, [])
         <div style={{padding:'.75rem 1rem .3rem',fontSize:'9px',fontWeight:'500',color:'#B39DAE',letterSpacing:'1px',textTransform:'uppercase'}}>Prospects</div>
         <div style={{flex:1,padding:'.4rem 7px .75rem',overflowY:'auto'}}>
           {prospects.map(p=>{
-            const s=gsc(p),st=gsty(s),unr=isUnrated(p)
+            const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
             return (
               <div key={p.id} onClick={()=>{setSelId(p.id);setPage('overview');setOvTab('detail')}}
                 style={{display:'flex',alignItems:'center',gap:'7px',padding:'7px 9px',borderRadius:'9px',cursor:'pointer',marginBottom:'2px',background:selId===p.id?'#FCE4EC':'transparent',borderLeft:selId===p.id?'3px solid #C2185B':'3px solid transparent',opacity:p.status==='eliminated'?0.4:1}}>
@@ -299,10 +399,8 @@ useEffect(() => { fetchProspects() }, [])
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:'10px',marginBottom:'1.25rem'}}>
               {[
-                {n:stats.total,l:'Total',c:'#C2185B'},
-                {n:stats.shortlisted,l:'Shortlisted',c:'#C2185B'},
-                {n:stats.met,l:'Met once',c:'#2E7D32'},
-                {n:stats.pending,l:'Pending',c:'#F57F17'},
+                {n:stats.total,l:'Total',c:'#C2185B'},{n:stats.shortlisted,l:'Shortlisted',c:'#C2185B'},
+                {n:stats.met,l:'Met once',c:'#2E7D32'},{n:stats.pending,l:'Pending',c:'#F57F17'},
                 {n:stats.eliminated,l:'Eliminated',c:'#C62828'},
               ].map((s,i)=>(
                 <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',padding:'.75rem',textAlign:'center'}}>
@@ -311,7 +409,7 @@ useEffect(() => { fetchProspects() }, [])
                 </div>
               ))}
             </div>
-            <div style={{display:'flex',gap:'5px',marginBottom:'1.25rem',flexWrap:'wrap'}}>
+            <div style={{display:'flex',gap:'5px',marginBottom:'1.25rem'}}>
               {['kanban','detail'].map(t=>(
                 <button key={t} onClick={()=>setOvTab(t)}
                   style={{padding:'6px 14px',borderRadius:'18px',fontSize:'12px',border:'1px solid rgba(194,24,91,0.13)',cursor:'pointer',background:ovTab===t?'#C2185B':'#fff',color:ovTab===t?'#fff':'#7B5E6B',fontFamily:'DM Sans,sans-serif'}}>
@@ -319,8 +417,8 @@ useEffect(() => { fetchProspects() }, [])
                 </button>
               ))}
             </div>
-            {ovTab==='kanban' && <KanbanView prospects={prospects} onMove={updateStatus} onSelect={selAndView} dragId={dragId} setDragId={setDragId} />}
-            {ovTab==='detail' && <DetailView p={selP} onParamChange={updateParam} onStatusChange={(id,st)=>updateStatus(id,st).then(fetchProspects)} onEdit={openEdit} onDelete={(id)=>setShowDelConfirm(id)} />}
+            {ovTab==='kanban' && <KanbanView prospects={prospects} sections={sections} onMove={updateStatus} onSelect={selAndView} dragId={dragId} setDragId={setDragId} />}
+            {ovTab==='detail' && <DetailView p={selP} sections={sections} onParamChange={updateParam} onStatusChange={updateStatus} onEdit={openEdit} onDelete={(id)=>setShowDelConfirm(id)} onEditQ={editQLabel} onDeleteQ={deleteQ} onAddQ={addQ} />}
           </div>
         )}
 
@@ -341,11 +439,11 @@ useEffect(() => { fetchProspects() }, [])
                     {spill(p.status)}
                   </div>
                   <div style={{textAlign:'center'}}>
-                    <div style={{fontSize:'24px',fontWeight:'600',fontFamily:'Playfair Display,serif',color:gsty(gsc(p)).col}}>{isUnrated(p)?'—':gsc(p)}</div>
+                    <div style={{fontSize:'24px',fontWeight:'600',fontFamily:'Playfair Display,serif',color:gsty(gsc(p,sections)).col}}>{isUnrated(p,sections)?'—':gsc(p,sections)}</div>
                     <div style={{fontSize:'9px',color:'#B39DAE'}}>score</div>
                   </div>
                 </div>
-                <SectionSliders p={p} prefix="ap" onParamChange={updateParam} twoCol={true} />
+                <SectionSliders p={p} sections={sections} prefix={`ap${p.id}`} onParamChange={updateParam} twoCol={true} onEditQ={editQLabel} onDeleteQ={deleteQ} onAddQ={addQ} />
                 <div style={{display:'flex',gap:'7px',marginTop:'12px',flexWrap:'wrap'}}>
                   <button onClick={()=>openEdit(p)} style={{padding:'7px 14px',borderRadius:'18px',fontSize:'12px',cursor:'pointer',border:'none',background:'#C2185B',color:'#fff',fontFamily:'DM Sans,sans-serif'}}>✏️ Edit</button>
                   <button onClick={()=>setShowDelConfirm(p.id)} style={{padding:'7px 14px',borderRadius:'18px',fontSize:'12px',cursor:'pointer',border:'1px solid #ffcc02',background:'#fff3e0',color:'#e65100',fontFamily:'DM Sans,sans-serif'}}>🗑️ Delete</button>
@@ -360,11 +458,10 @@ useEffect(() => { fetchProspects() }, [])
           <div>
             <div style={{marginBottom:'1.25rem'}}>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div>
-              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Ranked by overall groom score</div>
             </div>
             <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
-              {[...prospects].sort((a,b)=>gsc(b)-gsc(a)).map((p,i)=>{
-                const s=gsc(p),st=gsty(s),unr=isUnrated(p)
+              {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
+                const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
                 const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
                 return (
                   <div key={p.id} style={{display:'flex',alignItems:'center',gap:'10px',padding:'11px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>
@@ -388,18 +485,17 @@ useEffect(() => { fetchProspects() }, [])
 
         {/* COMPARE */}
         {page==='compare' && (
-          <CompareView prospects={prospects} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} />
+          <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} />
         )}
 
         {/* FUN ZONE */}
-        {page==='funzone' && <FunZone prospects={prospects} />}
+        {page==='funzone' && <FunZone prospects={prospects} sections={sections} />}
 
         {/* NOTES */}
         {page==='notes' && (
           <div>
             <div style={{marginBottom:'1.25rem'}}>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>Notes & Gut Feelings 📝</div>
-              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>What your heart says matters too</div>
             </div>
             {prospects.map(p=>(
               <div key={p.id} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem',marginBottom:'11px'}}>
@@ -426,7 +522,6 @@ useEffect(() => { fetchProspects() }, [])
           <div style={{background:'#fff',borderRadius:'16px',padding:'1.75rem',width:'560px',maxWidth:'95vw',maxHeight:'90vh',overflowY:'auto',boxShadow:'0 20px 60px rgba(194,24,91,.15)'}}>
             <div style={{fontFamily:'Playfair Display,serif',fontSize:'19px',color:'#2C1810',marginBottom:'1.25rem'}}>{editProspect?'Edit Prospect ✏️':'Add New Prospect 💌'}</div>
 
-            {/* Emoji picker */}
             <div style={{marginBottom:'12px'}}>
               <div style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B',marginBottom:'6px'}}>Avatar — tap to change</div>
               <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
@@ -493,7 +588,6 @@ useEffect(() => { fetchProspects() }, [])
               </div>
             </div>
 
-            {/* Family section */}
             <div style={{fontSize:'10px',fontWeight:'500',color:'#B39DAE',letterSpacing:'.8px',textTransform:'uppercase',margin:'14px 0 8px',paddingTop:'4px',borderTop:'1px solid rgba(194,24,91,0.1)'}}>Family & Background</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
               {[
@@ -515,7 +609,6 @@ useEffect(() => { fetchProspects() }, [])
               ))}
             </div>
 
-            {/* Card colour */}
             <div style={{marginTop:'12px'}}>
               <div style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B',marginBottom:'6px'}}>Card colour</div>
               <div style={{display:'flex',flexWrap:'wrap',gap:'7px'}}>
@@ -526,7 +619,6 @@ useEffect(() => { fetchProspects() }, [])
               </div>
             </div>
 
-            {/* Flags and vibes */}
             {[
               {id:'greens',label:'Green flags (comma-separated)',placeholder:'Honest, Family-oriented, Funny'},
               {id:'flags',label:'Yellow flags (comma-separated)',placeholder:'Workaholic, Travels rarely'},
@@ -565,60 +657,83 @@ useEffect(() => { fetchProspects() }, [])
   )
 }
 
-function KanbanView({ prospects, onMove, onSelect, dragId, setDragId }) {
-  return (
-    <div style={{display:'flex',gap:'14px',overflowX:'auto',paddingBottom:'1rem',alignItems:'flex-start'}}>
-      {KCOLS.map(col=>{
-        const cards = prospects.filter(p=>p.status===col.key)
-        return (
-          <div key={col.key} style={{flex:'0 0 210px',minWidth:'210px',background:col.colBg,border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}
-            onDragOver={e=>{e.preventDefault();e.currentTarget.style.outline='2px dashed #F48FB1'}}
-            onDragLeave={e=>{e.currentTarget.style.outline=''}}
-            onDrop={e=>{e.preventDefault();e.currentTarget.style.outline='';if(dragId)onMove(dragId,col.key);setDragId(null)}}>
-            <div style={{padding:'10px 12px',display:'flex',alignItems:'center',gap:'8px',borderBottom:'1px solid rgba(194,24,91,0.13)',background:col.bg}}>
-              <span style={{fontSize:'14px'}}>{col.icon}</span>
-              <span style={{fontSize:'12px',fontWeight:'500',flex:1,color:col.pill}}>{col.label}</span>
-              <span style={{fontSize:'10px',fontWeight:'600',padding:'2px 7px',borderRadius:'10px',background:col.pill+'22',color:col.pill}}>{cards.length}</span>
+// ── SECTION SLIDERS ───────────────────────────────────────────────────────────
+function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst, onEditQ, onDeleteQ, onAddQ }) {
+  const [openSecs, setOpenSecs] = useState(openFirst ? [0] : [])
+  const toggle = (i) => setOpenSecs(prev => prev.includes(i) ? prev.filter(x=>x!==i) : [...prev,i])
+
+  const cards = sections.map((sec,si)=>{
+    const ss = secScore(p,sec), st = gsty(ss), isOpen = openSecs.includes(si)
+    return (
+      <div key={sec.key} style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',overflow:'hidden'}}>
+        <div onClick={()=>toggle(si)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#fff',userSelect:'none'}}>
+          <span style={{fontSize:'20px'}}>{sec.icon}</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:'13px',fontWeight:'500',color:'#2C1810'}}>{sec.label}</div>
+            <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'1px'}}>{sec.desc}</div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:'8px',flexShrink:0}}>
+            <div style={{width:'60px',height:'5px',background:'#f5e6ec',borderRadius:'3px',overflow:'hidden'}}>
+              <div style={{width:ss+'%',height:'5px',borderRadius:'3px',background:sec.color}} />
             </div>
-            <div style={{padding:'10px 10px 14px',display:'flex',flexDirection:'column',gap:'9px',minHeight:'80px'}}>
-              {cards.length ? cards.map(p=>{
-                const s=gsc(p),st=gsty(s),unr=isUnrated(p)
+            <span style={{fontSize:'11px',fontWeight:'600',padding:'2px 8px',borderRadius:'10px',background:st.bg,color:st.col,minWidth:'30px',textAlign:'center'}}>{ss}</span>
+            <span style={{fontSize:'11px',color:'#B39DAE',display:'inline-block',transform:isOpen?'rotate(0deg)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
+          </div>
+        </div>
+        {isOpen && (
+          <div style={{padding:'14px',background:'#fffcfd',borderTop:'1px solid rgba(194,24,91,0.1)'}}>
+            <div style={{display:'flex',flexDirection:'column',gap:'18px'}}>
+              {sec.questions.map((q,qi)=>{
+                const val=(p.params||{})[q.k]||0
                 return (
-                  <div key={p.id} draggable onDragStart={()=>setDragId(p.id)} onDragEnd={()=>setDragId(null)}
-                    onClick={()=>onSelect(p.id)}
-                    style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',padding:'10px 11px',cursor:'pointer',transition:'all .2s',opacity:dragId===p.id?.5:1}}>
-                    <div style={{display:'flex',alignItems:'flex-start',gap:'8px',marginBottom:'7px'}}>
-                      <div style={{fontSize:'20px',background:p.color,borderRadius:'50%',width:'36px',height:'36px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:'12px',fontWeight:'500',color:'#2C1810'}}>{p.name}</div>
-                        <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'1px'}}>{p.age}y · {p.city}</div>
-                        <div style={{fontSize:'10px',color:'#7B5E6B'}}>{p.job}{p.company?' · '+p.company:''}</div>
-                      </div>
-                      <div style={{textAlign:'center',flexShrink:0}}>
-                        {unr
-                          ? <div style={{fontSize:'9px',color:'#B39DAE',fontStyle:'italic',marginTop:'4px'}}>Not rated</div>
-                          : <><div style={{fontSize:'17px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:st.col,lineHeight:1}}>{s}</div><div style={{fontSize:'8px',color:'#B39DAE'}}>score</div></>
-                        }
-                      </div>
+                  <div key={q.k} className="q-row">
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'6px'}}>
+                      <span style={{fontSize:'13px',color:'#7B5E6B'}}>
+                        {q.label}
+                        <span className="q-edit-btn" onClick={()=>onEditQ&&onEditQ(si,qi)} title="Edit question">✏️</span>
+                        {sec.questions.length>2 && <span className="q-edit-btn" onClick={()=>onDeleteQ&&onDeleteQ(si,qi)} title="Delete question" style={{color:'#C62828'}}>×</span>}
+                      </span>
+                      <span style={{fontSize:'13px',fontWeight:'600',color:val===0?'#B39DAE':'#C2185B',fontStyle:val===0?'italic':'normal',minWidth:'60px',textAlign:'right'}}>
+                        {val===0?'Not rated':val}
+                      </span>
                     </div>
-                    {(p.vibes||[]).slice(0,3).map(v=>(
-                      <span key={v} style={{fontSize:'9px',padding:'2px 7px',borderRadius:'7px',background:col.bg,color:col.pill,display:'inline-block',margin:'1px'}}>{v}</span>
-                    ))}
+                    <HeartSlider value={val} color={sec.color} onChange={e=>onParamChange(p.id,q.k,e.target.value)} />
+                    <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'2px'}}>{q.hint}</div>
                   </div>
                 )
-              }) : <div style={{textAlign:'center',padding:'1.5rem .5rem',color:'#B39DAE',fontSize:'11px',fontStyle:'italic'}}>Drop a card here</div>}
+              })}
             </div>
+            <button onClick={()=>onAddQ&&onAddQ(si)}
+              style={{marginTop:'12px',fontSize:'11px',padding:'5px 12px',borderRadius:'10px',border:`1px dashed ${sec.color}`,background:'transparent',color:sec.color,cursor:'pointer',width:'100%',fontFamily:'DM Sans,sans-serif'}}>
+              + Add question to this section
+            </button>
           </div>
-        )
-      })}
-    </div>
-  )
+        )}
+      </div>
+    )
+  })
+
+  if (twoCol) {
+    const pairs = []
+    for (let i=0; i<cards.length; i+=2) {
+      pairs.push(
+        <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'10px'}}>
+          {cards[i]}{cards[i+1]||<div/>}
+        </div>
+      )
+    }
+    return <div>{pairs}</div>
+  }
+  return <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>{cards}</div>
 }
 
-function DetailView({ p, onParamChange, onStatusChange, onEdit, onDelete }) {
+// ── DETAIL VIEW ───────────────────────────────────────────────────────────────
+function DetailView({ p, sections, onParamChange, onStatusChange, onEdit, onDelete, onEditQ, onDeleteQ, onAddQ }) {
   if (!p) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Select a prospect from the card view</div>
-  const s=gsc(p),unr=isUnrated(p)
-  const compat = s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
+  const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
+  const compat=s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
+  const verdict=s>=85?{bg:'#E8F5E9',c:'#2E7D32',t:`${p.name} scores really well across the board. Strong emotional maturity + family alignment + stability = a very solid foundation.`}:s>=75?{bg:'#FFF8E1',c:'#F57F17',t:`${p.name} has a lot going for him but a few areas need an honest conversation. Don't dismiss, don't commit — just keep talking.`}:{bg:'#FCE4EC',c:'#C2185B',t:`Mixed picture overall. Some genuinely good qualities but meaningful gaps. Meet once more casually before deciding.`}
+
   return (
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
       <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.25rem',gridColumn:'1/-1',display:'flex',alignItems:'flex-start',gap:'1.25rem',flexWrap:'wrap'}}>
@@ -653,8 +768,8 @@ function DetailView({ p, onParamChange, onStatusChange, onEdit, onDelete }) {
       </div>
 
       <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
-        <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>Section scores</div>
-        {SECTIONS.map(sec=>{
+        <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>Section scores at a glance</div>
+        {sections.map(sec=>{
           const ss=secScore(p,sec)
           return (
             <div key={sec.key} style={{marginBottom:'9px'}}>
@@ -668,6 +783,7 @@ function DetailView({ p, onParamChange, onStatusChange, onEdit, onDelete }) {
             </div>
           )
         })}
+        <div style={{padding:'.85rem 1rem',borderRadius:'10px',fontSize:'12px',lineHeight:1.7,marginTop:'.5rem',background:verdict.bg,color:verdict.c}}>{verdict.t}</div>
       </div>
 
       <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
@@ -706,78 +822,65 @@ function DetailView({ p, onParamChange, onStatusChange, onEdit, onDelete }) {
 
       <div style={{gridColumn:'1/-1',background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
         <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>Rate him — drag the 💗</div>
-        <SectionSliders p={p} prefix="dv" onParamChange={onParamChange} twoCol={true} openFirst={true} />
+        <SectionSliders p={p} sections={sections} prefix={`dv${p.id}`} onParamChange={onParamChange} twoCol={true} openFirst={true} onEditQ={onEditQ} onDeleteQ={onDeleteQ} onAddQ={onAddQ} />
       </div>
     </div>
   )
 }
 
-function SectionSliders({ p, prefix, onParamChange, twoCol, openFirst }) {
-  const [openSecs, setOpenSecs] = useState(openFirst ? [0] : [])
-  const toggle = (i) => setOpenSecs(prev => prev.includes(i) ? prev.filter(x=>x!==i) : [...prev,i])
-
-  const cards = SECTIONS.map((sec,si)=>{
-    const ss = secScore(p,sec)
-    const st = gsty(ss)
-    const isOpen = openSecs.includes(si)
-    return (
-      <div key={sec.key} style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',overflow:'hidden',marginBottom:'0'}}>
-        <div onClick={()=>toggle(si)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#fff',userSelect:'none'}}>
-          <span style={{fontSize:'20px'}}>{sec.icon}</span>
-          <div style={{flex:1}}>
-            <div style={{fontSize:'13px',fontWeight:'500',color:'#2C1810'}}>{sec.label}</div>
-            <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'1px'}}>{sec.desc}</div>
-          </div>
-          <div style={{display:'flex',alignItems:'center',gap:'8px',flexShrink:0}}>
-            <div style={{width:'60px',height:'5px',background:'#f5e6ec',borderRadius:'3px',overflow:'hidden'}}>
-              <div style={{width:ss+'%',height:'5px',borderRadius:'3px',background:sec.color}} />
+// ── KANBAN VIEW ───────────────────────────────────────────────────────────────
+function KanbanView({ prospects, sections, onMove, onSelect, dragId, setDragId }) {
+  return (
+    <div style={{display:'flex',gap:'14px',overflowX:'auto',paddingBottom:'1rem',alignItems:'flex-start'}}>
+      {KCOLS.map(col=>{
+        const cards=prospects.filter(p=>p.status===col.key)
+        return (
+          <div key={col.key} style={{flex:'0 0 210px',minWidth:'210px',background:col.colBg,border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}
+            onDragOver={e=>{e.preventDefault();e.currentTarget.style.outline='2px dashed #F48FB1'}}
+            onDragLeave={e=>{e.currentTarget.style.outline=''}}
+            onDrop={e=>{e.preventDefault();e.currentTarget.style.outline='';if(dragId)onMove(dragId,col.key);setDragId(null)}}>
+            <div style={{padding:'10px 12px',display:'flex',alignItems:'center',gap:'8px',borderBottom:'1px solid rgba(194,24,91,0.13)',background:col.bg}}>
+              <span style={{fontSize:'14px'}}>{col.icon}</span>
+              <span style={{fontSize:'12px',fontWeight:'500',flex:1,color:col.pill}}>{col.label}</span>
+              <span style={{fontSize:'10px',fontWeight:'600',padding:'2px 7px',borderRadius:'10px',background:col.pill+'22',color:col.pill}}>{cards.length}</span>
             </div>
-            <span style={{fontSize:'11px',fontWeight:'600',padding:'2px 8px',borderRadius:'10px',background:st.bg,color:st.col,minWidth:'30px',textAlign:'center'}}>{ss}</span>
-            <span style={{fontSize:'11px',color:'#B39DAE',display:'inline-block',transform:isOpen?'rotate(0deg)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
-          </div>
-        </div>
-        {isOpen && (
-          <div style={{padding:'14px',background:'#fffcfd',borderTop:'1px solid rgba(194,24,91,0.1)'}}>
-            <div style={{display:'flex',flexDirection:'column',gap:'18px'}}>
-              {sec.questions.map(q=>{
-                const val=(p.params||{})[q.k]||0
+            <div style={{padding:'10px 10px 14px',display:'flex',flexDirection:'column',gap:'9px',minHeight:'80px'}}>
+              {cards.length ? cards.map(p=>{
+                const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
                 return (
-                  <div key={q.k}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'6px'}}>
-                      <span style={{fontSize:'13px',color:'#7B5E6B'}}>{q.label}</span>
-                      <span style={{fontSize:'13px',fontWeight:'600',color:val===0?'#B39DAE':'#C2185B',fontStyle:val===0?'italic':'normal',minWidth:'60px',textAlign:'right'}}>
-                        {val===0?'Not rated':val}
-                      </span>
+                  <div key={p.id} draggable onDragStart={()=>setDragId(p.id)} onDragEnd={()=>setDragId(null)}
+                    onClick={()=>onSelect(p.id)}
+                    style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',padding:'10px 11px',cursor:'pointer',opacity:dragId===p.id?.5:1}}>
+                    <div style={{display:'flex',alignItems:'flex-start',gap:'8px',marginBottom:'7px'}}>
+                      <div style={{fontSize:'20px',background:p.color,borderRadius:'50%',width:'36px',height:'36px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:'12px',fontWeight:'500',color:'#2C1810'}}>{p.name}</div>
+                        <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'1px'}}>{p.age}y · {p.city}</div>
+                        <div style={{fontSize:'10px',color:'#7B5E6B'}}>{p.job}{p.company?' · '+p.company:''}</div>
+                      </div>
+                      <div style={{textAlign:'center',flexShrink:0}}>
+                        {unr
+                          ? <div style={{fontSize:'9px',color:'#B39DAE',fontStyle:'italic',marginTop:'4px'}}>Not rated</div>
+                          : <><div style={{fontSize:'17px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:st.col,lineHeight:1}}>{s}</div><div style={{fontSize:'8px',color:'#B39DAE'}}>score</div></>
+                        }
+                      </div>
                     </div>
-                    <input type="range" min="0" max="100" step="1" defaultValue={val}
-                      onChange={e=>onParamChange(p.id,q.k,e.target.value)}
-                      style={{width:'100%',accentColor:sec.color,cursor:'pointer',height:'4px'}} />
-                    <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'2px'}}>{q.hint}</div>
+                    {(p.vibes||[]).slice(0,3).map(v=>(
+                      <span key={v} style={{fontSize:'9px',padding:'2px 7px',borderRadius:'7px',background:col.bg,color:col.pill,display:'inline-block',margin:'1px'}}>{v}</span>
+                    ))}
                   </div>
                 )
-              })}
+              }) : <div style={{textAlign:'center',padding:'1.5rem .5rem',color:'#B39DAE',fontSize:'11px',fontStyle:'italic'}}>Drop a card here</div>}
             </div>
           </div>
-        )}
-      </div>
-    )
-  })
-
-  if (twoCol) {
-    const pairs = []
-    for (let i=0; i<cards.length; i+=2) {
-      pairs.push(
-        <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'10px'}}>
-          {cards[i]}{cards[i+1]||<div/>}
-        </div>
-      )
-    }
-    return <div>{pairs}</div>
-  }
-  return <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>{cards}</div>
+        )
+      })}
+    </div>
+  )
 }
 
-function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen }) {
+// ── COMPARE VIEW ──────────────────────────────────────────────────────────────
+function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen }) {
   const nonElim = prospects.filter(p=>p.status!=='eliminated')
   const active = prospects.filter(p=>cmpSelected.includes(p.id))
 
@@ -785,8 +888,7 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
     if (cmpSelected.includes(id)) setCmpSelected(cmpSelected.filter(x=>x!==id))
     else if (cmpSelected.length < 5) setCmpSelected([...cmpSelected,id])
     else alert('Max 5 prospects at a time')
-    setCmpQualOpen(false)
-    setCmpQuantOpen(false)
+    setCmpQualOpen(false); setCmpQuantOpen(false)
   }
 
   return (
@@ -799,7 +901,7 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
         <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'10px'}}>Select prospects</div>
         <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'10px'}}>
           {nonElim.map(p=>{
-            const checked=cmpSelected.includes(p.id),s=gsc(p),st=gsty(s),unr=isUnrated(p)
+            const checked=cmpSelected.includes(p.id),s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
             return (
               <div key={p.id} onClick={()=>toggle(p.id)}
                 style={{display:'flex',alignItems:'center',gap:'7px',padding:'6px 12px',borderRadius:'20px',cursor:'pointer',border:`2px solid ${checked?'#C2185B':'rgba(194,24,91,0.13)'}`,background:checked?p.color:'#fff',transition:'all .15s'}}>
@@ -822,7 +924,6 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
 
       {active.length >= 2 && (
         <>
-          {/* Qualitative */}
           <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden',marginBottom:'12px'}}>
             <div onClick={()=>setCmpQualOpen(!cmpQualOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#FFF0F5',borderBottom:cmpQualOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
               <span style={{fontSize:'16px'}}>📋</span>
@@ -835,12 +936,10 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
             {cmpQualOpen && (
               <div style={{overflowX:'auto'}}>
                 <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
-                  <thead>
-                    <tr style={{background:'#FFF0F5'}}>
-                      <th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>
-                      {active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}
-                    </tr>
-                  </thead>
+                  <thead><tr style={{background:'#FFF0F5'}}>
+                    <th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>
+                    {active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}
+                  </tr></thead>
                   <tbody>
                     {[
                       {l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},
@@ -861,7 +960,6 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
             )}
           </div>
 
-          {/* Quantitative */}
           <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
             <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#FCE4EC',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
               <span style={{fontSize:'16px'}}>📊</span>
@@ -874,24 +972,20 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
             {cmpQuantOpen && (
               <div style={{overflowX:'auto'}}>
                 <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
-                  <thead>
-                    <tr style={{background:'#FCE4EC'}}>
-                      <th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'30%'}}>Section / Question</th>
-                      {active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}
-                    </tr>
-                  </thead>
+                  <thead><tr style={{background:'#FCE4EC'}}>
+                    <th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'30%'}}>Section / Question</th>
+                    {active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}
+                  </tr></thead>
                   <tbody>
-                    {SECTIONS.flatMap(sec=>{
-                      const secVals=active.map(p=>secScore(p,sec))
-                      const secMax=Math.max(...secVals)
+                    {sections.flatMap(sec=>{
+                      const secVals=active.map(p=>secScore(p,sec)),secMax=Math.max(...secVals)
                       return [
                         <tr key={sec.key} style={{background:'#fdf5f8'}}>
                           <td style={{padding:'9px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontSize:'12px',fontWeight:'600',color:'#2C1810'}}>{sec.icon} {sec.label}</td>
                           {active.map((p,i)=><td key={p.id} style={{textAlign:'center',padding:'9px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontWeight:'600',fontSize:'13px',color:secVals[i]===secMax?sec.color:'#7B5E6B',background:secVals[i]===secMax?sec.color+'11':''}}>{secVals[i]}{secVals[i]===secMax?' ▲':''}</td>)}
                         </tr>,
                         ...sec.questions.map(q=>{
-                          const vals=active.map(p=>(p.params||{})[q.k]||0)
-                          const mx=Math.max(...vals)
+                          const vals=active.map(p=>(p.params||{})[q.k]||0),mx=Math.max(...vals)
                           return (
                             <tr key={q.k}>
                               <td style={{padding:'6px 10px 6px 22px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontSize:'11px',color:'#7B5E6B',fontStyle:'italic'}}>{q.label}</td>
@@ -903,7 +997,7 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
                     })}
                     <tr style={{borderTop:'2px solid rgba(194,24,91,0.2)',background:'#FCE4EC'}}>
                       <td style={{fontSize:'12px',fontWeight:'700',padding:'10px',color:'#2C1810'}}>Overall Score</td>
-                      {active.map(p=>{const s=gsc(p),st=gsty(s),unr=isUnrated(p);return <td key={p.id} style={{textAlign:'center',padding:'10px 6px',fontSize:'18px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,background:unr?'#F5F5F5':st.bg}}>{unr?'—':s+'/100'}</td>})}
+                      {active.map(p=>{const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections);return <td key={p.id} style={{textAlign:'center',padding:'10px 6px',fontSize:'18px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,background:unr?'#F5F5F5':st.bg}}>{unr?'—':s+'/100'}</td>})}
                     </tr>
                   </tbody>
                 </table>
@@ -916,37 +1010,34 @@ function CompareView({ prospects, cmpSelected, setCmpSelected, cmpQualOpen, setC
   )
 }
 
-function FunZone({ prospects }) {
+// ── FUN ZONE ──────────────────────────────────────────────────────────────────
+function FunZone({ prospects, sections }) {
   if (!prospects.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Add some prospects first!</div>
   const active = prospects.filter(p=>p.status!=='eliminated')
   if (!active.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>All eliminated! Add more.</div>
 
   const fns=(arr,sec)=>[...arr].sort((a,b)=>secScore(b,sec)-secScore(a,sec))[0]
-  const top=[...active].sort((a,b)=>gsc(b)-gsc(a))[0]
-  const secEQ=SECTIONS[0],secFam=SECTIONS[1],secFin=SECTIONS[2],secLS=SECTIONS[3],secFut=SECTIONS[4],secFun=SECTIONS[5]
+  const secEQ=sections[0],secFam=sections[1],secFin=sections[2],secLS=sections[3],secFut=sections[4],secFun=sections[5]
 
   function milScore(p){return Math.round((secScore(p,secFun)+secScore(p,secFam))/2)}
-  function igScore(p){return secScore(p,secLS)}
-  function heaScore(p){return Math.round((secScore(p,secEQ)+secScore(p,secFam))/2)}
-  function trophyScore(p){return Math.round((secScore(p,secFin)+secScore(p,secFut))/2)}
-
   const milSorted=[...active].sort((a,b)=>milScore(b)-milScore(a))
-  const milChamp=milSorted[0]
-  const milWorst=milSorted[milSorted.length-1]
-  const igWinner=[...prospects].sort((a,b)=>igScore(b)-igScore(a))[0]
-  const heaWinner=[...prospects].sort((a,b)=>heaScore(b)-heaScore(a))[0]
-  const trophyWinner=[...prospects].sort((a,b)=>trophyScore(b)-trophyScore(a))[0]
+  const milChamp=milSorted[0], milWorst=milSorted[milSorted.length-1]
+
+  const top=[...active].sort((a,b)=>gsc(b,sections)-gsc(a,sections))[0]
+  const igWinner=[...prospects].sort((a,b)=>secScore(b,secLS)-secScore(a,secLS))[0]
+  const heaWinner=[...prospects].sort((a,b)=>(secScore(b,secEQ)+secScore(b,secFam))-(secScore(a,secEQ)+secScore(a,secFam)))[0]
+  const trophyWinner=[...prospects].sort((a,b)=>(secScore(b,secFin)+secScore(b,secFut))-(secScore(a,secFin)+secScore(a,secFut)))[0]
   const funWinner=fns(prospects,secFun)
 
   const zodiacs={Aries:'♈',Taurus:'♉',Gemini:'♊',Cancer:'♋',Leo:'♌',Virgo:'♍',Libra:'♎',Scorpio:'♏',Sagittarius:'♐',Capricorn:'♑',Aquarius:'♒',Pisces:'♓'}
 
-  const cards=[
-    {ic:'👑',t:'Top pick right now',p:top,sub:`Score: ${gsc(top)}/100`},
+  const funCards=[
+    {ic:'👑',t:'Top pick right now',p:top,sub:`Score: ${gsc(top,sections)}/100`},
     {ic:'😅',t:"MIL's favourite",p:milChamp,sub:`MIL score: ${milScore(milChamp)}/100`},
     {ic:'💛',t:'Most emotionally mature',p:fns(prospects,secEQ),sub:'Emotional Quotient section'},
     {ic:'🏠',t:'Best family values',p:fns(prospects,secFam),sub:'Family & Values section'},
     {ic:'💸',t:'Most financially sorted',p:fns(prospects,secFin),sub:'Financial & Career section'},
-    {ic:'📸',t:'Best Instagram husband',p:igWinner,sub:`Lifestyle score: ${igScore(igWinner)}/100`},
+    {ic:'📸',t:'Best Instagram husband',p:igWinner,sub:`Lifestyle score: ${secScore(igWinner,secLS)}/100`},
     {ic:'🌹',t:'Happily ever after',p:heaWinner,sub:'EQ + Family sections'},
     {ic:'🏆',t:'Trophy husband potential',p:trophyWinner,sub:'Finance + Future sections'},
     {ic:'🎉',t:'Most fun to be around',p:funWinner,sub:`Fun score: ${secScore(funWinner,secFun)}/100`},
@@ -960,7 +1051,7 @@ function FunZone({ prospects }) {
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(170px,1fr))',gap:'12px',marginBottom:'1.25rem'}}>
-        {cards.map((x,i)=>(
+        {funCards.map((x,i)=>(
           <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
             <div style={{fontSize:'12px',fontWeight:'500',color:'#2C1810',marginBottom:'.6rem',display:'flex',alignItems:'center',gap:'6px'}}><span>{x.ic}</span>{x.t}</div>
             <div style={{fontSize:'26px',marginBottom:'3px'}}>{x.p.emoji}</div>
@@ -994,7 +1085,7 @@ function FunZone({ prospects }) {
 
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>🏆 Section Champions</div>
-          {SECTIONS.map(sec=>{
+          {sections.map(sec=>{
             const winner=fns(prospects,sec),score=secScore(winner,sec)
             return (
               <div key={sec.key} style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'9px'}}>
@@ -1028,7 +1119,7 @@ function FunZone({ prospects }) {
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>💬 Quick Verdicts</div>
           {active.map(p=>{
-            const s=gsc(p),st=gsty(s),unr=isUnrated(p)
+            const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
             const cp=s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
             return (
               <div key={p.id} style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px',paddingBottom:'8px',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>
