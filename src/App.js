@@ -24,8 +24,16 @@ export default function App() {
   }, [])
 
   async function checkMode(session) {
+    const cachedMode = localStorage.getItem(`rishta_mode_${session.user.id}`)
+    if (cachedMode) {
+      setMode(cachedMode)
+      setLoading(false)
+    }
     const { data } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
-    setMode(data?.mode || null)
+    if (data?.mode) {
+      setMode(data.mode)
+      localStorage.setItem(`rishta_mode_${session.user.id}`, data.mode)
+    }
     setLoading(false)
   }
 

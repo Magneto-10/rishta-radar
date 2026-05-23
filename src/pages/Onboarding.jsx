@@ -13,6 +13,7 @@ export default function Onboarding({ session, onComplete }) {
       email: session.user.email,
       mode: mode
     })
+    localStorage.setItem(`rishta_mode_${session.user.id}`, mode)
     onComplete(mode)
   }
 
