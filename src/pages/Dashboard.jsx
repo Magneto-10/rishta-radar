@@ -96,17 +96,15 @@ const KCOLS = [
 const SWATCHES = ['#FCE4EC','#F8BBD0','#FFF0F5','#FFF8E1','#FFF3E0','#FAEEDA','#E8F5E9','#E0F2F1','#E3F2FD','#EDE7F6','#F3E5F5','#FBE9E7','#EFEBE9','#FFFDE7','#E8EAF6','#E0F7FA']
 const EMOJIS = ['👨‍💻','👨‍⚕️','👨‍🍳','👨‍🎨','👨‍🏫','👨‍💼','👨‍🔬','👨‍✈️','👨‍⚖️','🧔','👱','🙋','🤵','👮','👷','🌟','✨','🎯','🚀','🏆','💡','🦁','🐯','🦊','🦅','🦋','💎','👑','🎸','⚽','🏋️','🎮','📚','🎭','🌈','🍕','☕','🎻']
 
-function loadSections(mode) {
-  const defaultSecs = mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS
+function loadSections() {
   try {
-    const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
-    const saved = localStorage.getItem(key)
+    const saved = localStorage.getItem('rishta_sections_v4')
     if (saved) {
       const parsed = JSON.parse(saved)
-      return defaultSecs.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
+      return DEFAULT_SECTIONS.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
     }
   } catch(e) {}
-  return JSON.parse(JSON.stringify(defaultSecs))
+  return JSON.parse(JSON.stringify(DEFAULT_SECTIONS))
 }
 function saveSections(secs) {
   try { localStorage.setItem('rishta_sections_v4', JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
@@ -212,6 +210,12 @@ export default function Dashboard({ session, mode }) {
     if (data && data.length > 0 && !selId) setSelId(data[0].id)
   }, []) // eslint-disable-line
 
+  useEffect(() => {
+    const secs = mode === 'he' ?
+      JSON.parse(JSON.stringify(BRIDE_SECTIONS)) :
+      loadSections()
+    setSections(secs)
+  }, [mode])
   useEffect(() => { fetchProspects() }, []) // eslint-disable-line
 
   useEffect(() => {
