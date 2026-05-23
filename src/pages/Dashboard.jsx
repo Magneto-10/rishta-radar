@@ -421,23 +421,29 @@ export default function Dashboard({ session }) {
                 const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
                 const rc=i===0?'#F57F17':i===1?'#78909C':i===2?'#8D6E63':'#B39DAE'
                 return (
-                  <div key={p.id} style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>
+                  <div key={p.id} style={{display:'flex',alignItems:'center',gap:'12px',padding:'16px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>
                     <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',width:'28px',textAlign:'center',color:rc,flexShrink:0}}>{i+1}</div>
-                    <div style={{fontSize:'26px',background:p.color,borderRadius:'50%',width:'44px',height:'44px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
+                    <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
                     <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:'14px',fontWeight:'500',color:'#2C1810'}}>{p.name}</div>
-                      <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{p.job}{p.city?' · '+p.city:''}</div>
-                      <div style={{marginTop:'6px'}}>{spill(p.status)}</div>
-                      <div style={{display:'flex',gap:'3px',marginTop:'6px'}}>
-                        {sections.map(sec=>{
-                          const ss=secScore(p,sec)
-                          return <div key={sec.key} style={{flex:1,height:'4px',background:sec.color,borderRadius:'2px',opacity:ss===0?0.2:ss/100}}></div>
-                        })}
+                      <div style={{fontSize:'15px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
+                      <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>{[p.age?p.age+'y':null,p.job,p.city].filter(Boolean).join(' · ')}</div>
+                      <div style={{marginTop:'5px',display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap'}}>
+                        {spill(p.status)}
+                        {(() => {
+                          const scored = sections.map(sec=>({sec,score:secScore(p,sec)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score)
+                          if(scored.length===0) return null
+                          const best = scored[0]
+                          const worst = scored[scored.length-1]
+                          return <>
+                            <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32'}}>💪 {best.sec.label.split(' ')[0]}: {best.score}</span>
+                            {scored.length>1 && <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#FFF8E1',color:'#F57F17'}}>⚠️ {worst.sec.label.split(' ')[0]}: {worst.score}</span>}
+                          </>
+                        })()}
                       </div>
                     </div>
                     <div style={{textAlign:'center',flexShrink:0}}>
-                      <div style={{fontSize:'24px',fontWeight:'600',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col}}>{unr?'—':s}</div>
-                      <div style={{fontSize:'9px',color:'#B39DAE'}}>/100</div>
+                      <div style={{fontSize:'26px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
+                      <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'2px'}}>/100</div>
                     </div>
                   </div>
                 )
