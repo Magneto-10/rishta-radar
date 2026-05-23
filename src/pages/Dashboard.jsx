@@ -416,7 +416,7 @@ export default function Dashboard({ session, mode }) {
           <div>
             <div style={{marginBottom:'1.25rem'}}>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>The Rishta Radar ✨</div>
-              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Organised, fun, and surprisingly scientific groom shortlisting</div>
+              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>{mode==='he' ? 'Organised, fun, and surprisingly scientific bride shortlisting' : 'Organised, fun, and surprisingly scientific groom shortlisting'}</div>
             </div>
             <div className="rr-stats-grid" style={{display:'grid',gridTemplateColumns:isMobile?'repeat(3,1fr)':'repeat(5,1fr)',gap:'10px',marginBottom:'1.25rem'}}>
               {[{n:stats.total,l:'Total',c:'#C2185B'},{n:stats.shortlisted,l:'Shortlisted',c:'#C2185B'},{n:stats.met,l:'Met once',c:'#2E7D32'},{n:stats.pending,l:'Pending',c:'#F57F17'},{n:stats.eliminated,l:'Eliminated',c:'#C62828'}].map((s,i)=>(
@@ -435,7 +435,7 @@ export default function Dashboard({ session, mode }) {
               ))}
             </div>
             {ovTab==='kanban' && <KanbanBoard prospects={prospects} sections={sections} onMove={updateStatus} onSelect={selAndView} dragId={dragId} setDragId={setDragId} theme={theme} />}
-            {ovTab==='detail' && <ProfileView prospects={prospects} sections={sections} selId={selId} setSelId={setSelId} onGoToProspects={(id)=>{setPage('prospects');setSelId(id)}} isMobile={isMobile} theme={theme} />}
+            {ovTab==='detail' && <ProfileView prospects={prospects} sections={sections} selId={selId} setSelId={setSelId} onGoToProspects={(id)=>{setPage('prospects');setSelId(id)}} isMobile={isMobile} theme={theme} mode={mode} />}
           </div>
         )}
 
@@ -477,7 +477,7 @@ export default function Dashboard({ session, mode }) {
           <div>
             <div style={{marginBottom:'1.25rem'}}>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div>
-              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Ranked by overall groom score</div>
+              <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>{mode==='he' ? 'Ranked by overall bride score' : 'Ranked by overall groom score'}</div>
             </div>
             <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
               {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
@@ -677,7 +677,7 @@ export default function Dashboard({ session, mode }) {
 }
 
 // ── PROFILE VIEW (read-only overview) ────────────────────────────────────────
-function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, isMobile, theme={primary:'#C2185B',light:'#FFF0F5'} }) {
+function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, isMobile, theme={primary:'#C2185B',light:'#FFF0F5'}, mode }) {
   const p = prospects.find(x=>x.id===selId)
   const s = p ? gsc(p,sections) : 0
   const cp = s>=85?{stars:'★★★★★',lbl:'Strong match!',c:'#2E7D32'}:s>=78?{stars:'★★★★☆',lbl:'Good potential',c:'#F57F17'}:s>=68?{stars:'★★★☆☆',lbl:'Worth exploring',c:'#F57F17'}:{stars:'★★☆☆☆',lbl:'Think carefully',c:'#C62828'}
@@ -728,7 +728,7 @@ function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, is
             </div>
             <div style={{textAlign:'center',flexShrink:0}}>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'48px',fontWeight:'600',color:unr?'#B39DAE':'#C2185B',lineHeight:1}}>{unr?'—':s}</div>
-              <div style={{fontSize:'10px',color:'#B39DAE'}}>groom score</div>
+              <div style={{fontSize:'10px',color:'#B39DAE'}}>{mode==='he' ? 'bride score' : 'groom score'}</div>
               <div style={{fontSize:'20px',color:cp.c,marginTop:'4px'}}>{cp.stars}</div>
               <div style={{fontSize:'11px',color:cp.c,marginTop:'2px'}}>{cp.lbl}</div>
             </div>
