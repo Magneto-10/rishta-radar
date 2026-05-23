@@ -739,7 +739,7 @@ function NotesBox({ p, onSave }) {
         <button
           onClick={handleSave}
           disabled={!dirty}
-          style={{padding:'5px 14px',borderRadius:'18px',fontSize:'12px',border:'none',background:dirty?'#C2185B':'#f5e6ec',color:dirty?'#fff':'#B39DAE',fontFamily:'DM Sans,sans-serif',fontWeight:'500',cursor:dirty?'pointer':'not-allowed',transition:'all .15s'}}>
+          style={{padding:'5px 14px',borderRadius:'18px',fontSize:'12px',border:'none',background:saved?'#E8F5E9':dirty?'#C2185B':'#f5e6ec',color:saved?'#2E7D32':dirty?'#fff':'#B39DAE',fontFamily:'DM Sans,sans-serif',fontWeight:'500',cursor:dirty?'pointer':'not-allowed',transition:'all .15s'}}>
           {saved ? '✓ Saved!' : '✓ Save'}
         </button>
       </div>
