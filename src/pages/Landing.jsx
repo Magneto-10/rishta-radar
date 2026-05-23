@@ -163,13 +163,13 @@ export default function Landing() {
       </div>
 
       {/* CTA BANNER */}
-      <div style={{background:'linear-gradient(135deg,#880E4F,#C2185B)',padding:'4rem 2rem',textAlign:'center'}}>
+      <div style={{background:'linear-gradient(135deg,#B71C1C,#C2185B,#AD1457)',padding:'4rem 2rem',textAlign:'center'}}>
         <h2 style={{fontFamily:'Playfair Display,serif',fontSize:'32px',color:'#fff',marginBottom:'1rem'}}>Ready to find your match?</h2>
         <p style={{fontSize:'15px',color:'rgba(255,255,255,0.85)',marginBottom:'2rem',maxWidth:'400px',margin:'0 auto 2rem',lineHeight:1.7}}>
           Join thousands of people making smarter rishta decisions
         </p>
         <button onClick={handleLogin}
-          style={{padding:'14px 40px',borderRadius:'30px',background:'#fff',color:'#880E4F',border:'none',cursor:'pointer',fontSize:'15px',fontWeight:'600',fontFamily:'DM Sans,sans-serif'}}>
+          style={{padding:'14px 40px',borderRadius:'30px',background:'#fff',color:'#B71C1C',border:'none',cursor:'pointer',fontSize:'15px',fontWeight:'600',fontFamily:'DM Sans,sans-serif'}}>
           Get started →
         </button>
       </div>
