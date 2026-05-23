@@ -418,17 +418,18 @@ export default function Dashboard({ session }) {
             <div style={{marginBottom:'1.25rem'}}><div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>🏆 Leaderboard</div></div>
             <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
               {(() => {
-                const mobile = window.innerWidth < 1024
+                const SEC_SHORT = {emotional:'EQ',family:'Family',financial:'Finance',lifestyle:'Lifestyle',future:'Future',fun:'Fun'}
+                const shortName = sec => SEC_SHORT[sec.key] || sec.label.split(' ')[0]
+                const gridStyle = {display:'grid',gridTemplateColumns:'28px 46px 2fr 1.2fr 1.2fr 70px',gap:'0 12px',alignItems:'center',padding:'0 1rem'}
                 const hdr = {fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.8px'}
                 return <>
-                  <div style={{display:'flex',alignItems:'center',gap:'12px',padding:'10px 1rem',borderBottom:'2px solid rgba(194,24,91,0.13)',background:'#FFFAF8'}}>
-                    <div style={{width:'28px',flexShrink:0}}></div>
-                    <div style={{width:'46px',flexShrink:0}}></div>
-                    <div style={{flex:1,minWidth:0,...hdr}}>Prospect</div>
-                    {!mobile && <div style={{width:'110px',flexShrink:0,...hdr}}>Location</div>}
-                    {!mobile && <div style={{width:'90px',flexShrink:0,...hdr}}>Highest</div>}
-                    {!mobile && <div style={{width:'90px',flexShrink:0,...hdr}}>Lowest</div>}
-                    <div style={{width:'52px',textAlign:'center',flexShrink:0,...hdr}}>Score</div>
+                  <div style={{...gridStyle,paddingTop:'10px',paddingBottom:'10px',borderBottom:'2px solid rgba(194,24,91,0.13)',background:'#FFFAF8'}}>
+                    <div></div>
+                    <div></div>
+                    <div style={hdr}>Prospect</div>
+                    <div style={hdr}>Highest</div>
+                    <div style={hdr}>Lowest</div>
+                    <div style={{...hdr,textAlign:'center'}}>Score</div>
                   </div>
                   {[...prospects].sort((a,b)=>gsc(b,sections)-gsc(a,sections)).map((p,i)=>{
                     const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections)
@@ -437,28 +438,26 @@ export default function Dashboard({ session }) {
                     const best=scored.length>0?scored[0]:null
                     const worst=scored.length>1?scored[scored.length-1]:null
                     return (
-                      <div key={p.id} style={{display:'flex',alignItems:'center',gap:'12px',padding:'14px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)',background:i%2===0?'#fff':'#FFFAF8'}}>
-                        <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',width:'28px',textAlign:'center',color:rc,flexShrink:0}}>{i+1}</div>
-                        <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
-                        <div style={{flex:1,minWidth:0}}>
+                      <div key={p.id} style={{...gridStyle,paddingTop:'14px',paddingBottom:'14px',borderBottom:'1px solid rgba(194,24,91,0.1)',background:i%2===0?'#fff':'#FFFAF8'}}>
+                        <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',textAlign:'center',color:rc}}>{i+1}</div>
+                        <div style={{fontSize:'28px',background:p.color,borderRadius:'50%',width:'46px',height:'46px',display:'flex',alignItems:'center',justifyContent:'center'}}>{p.emoji}</div>
+                        <div style={{minWidth:0}}>
                           <div style={{fontSize:'14px',fontWeight:'600',color:'#2C1810'}}>{p.name}</div>
                           <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{[p.age?p.age+'y':null,p.job].filter(Boolean).join(' · ')}</div>
-                          <div style={{marginTop:'4px'}}>{spill(p.status)}</div>
+                          {p.city && <div style={{fontSize:'11px',color:'#B39DAE',marginTop:'1px'}}>{p.city}</div>}
+                          <div style={{marginTop:'5px'}}>{spill(p.status)}</div>
                         </div>
-                        {!mobile && <div style={{width:'110px',flexShrink:0}}>
-                          <div style={{fontSize:'11px',color:'#7B5E6B'}}>{p.city||'—'}</div>
-                        </div>}
-                        {!mobile && <div style={{width:'90px',flexShrink:0}}>
+                        <div>
                           {best
-                            ? <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32',display:'inline-block'}}>⬆️ {best.sec.icon} {best.score}</span>
+                            ? <span style={{fontSize:'11px',padding:'3px 8px',borderRadius:'8px',background:'#E8F5E9',color:'#2E7D32',display:'inline-block',whiteSpace:'nowrap'}}>{shortName(best.sec)}: {best.score}</span>
                             : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
-                        </div>}
-                        {!mobile && <div style={{width:'90px',flexShrink:0}}>
+                        </div>
+                        <div>
                           {worst
-                            ? <span style={{fontSize:'11px',padding:'2px 8px',borderRadius:'8px',background:'#FFEBEE',color:'#C62828',display:'inline-block'}}>⬇️ {worst.sec.icon} {worst.score}</span>
+                            ? <span style={{fontSize:'11px',padding:'3px 8px',borderRadius:'8px',background:'#FFEBEE',color:'#C62828',display:'inline-block',whiteSpace:'nowrap'}}>{shortName(worst.sec)}: {worst.score}</span>
                             : <span style={{color:'#B39DAE',fontSize:'11px'}}>—</span>}
-                        </div>}
-                        <div style={{width:'52px',textAlign:'center',flexShrink:0}}>
+                        </div>
+                        <div style={{textAlign:'center'}}>
                           <div style={{fontSize:'24px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,lineHeight:1}}>{unr?'—':s}</div>
                           <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'2px'}}>/100</div>
                         </div>
