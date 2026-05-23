@@ -8,7 +8,6 @@ export default function App() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const [mode, setMode] = useState(null)
-  const [checkingMode, setCheckingMode] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -25,11 +24,9 @@ export default function App() {
   }, [])
 
   async function checkMode(session) {
-    setCheckingMode(true)
     const { data } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
     setMode(data?.mode || null)
     setLoading(false)
-    setCheckingMode(false)
   }
 
   function handleOnboardingComplete(selectedMode) {
