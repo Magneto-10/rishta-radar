@@ -796,8 +796,18 @@ function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst,
   })
 
   if (twoCol) {
-    const pairs=[]
-    for(let i=0;i<cards.length;i+=2) pairs.push(<div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'10px'}}>{cards[i]}{cards[i+1]||<div/>}</div>)
+    const isMobileView = window.innerWidth < 1024
+    if (isMobileView) {
+      return <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>{cards}</div>
+    }
+    const pairs = []
+    for(let i=0; i<cards.length; i+=2) {
+      pairs.push(
+        <div key={i} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px',marginBottom:'10px'}}>
+          {cards[i]}{cards[i+1]||<div/>}
+        </div>
+      )
+    }
     return <div>{pairs}</div>
   }
   return <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>{cards}</div>
