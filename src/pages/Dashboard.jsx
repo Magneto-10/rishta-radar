@@ -405,6 +405,22 @@ export default function Dashboard({ session, mode }) {
         <div style={{padding:'.6rem 1rem',borderTop:'1px solid rgba(194,24,91,0.13)',display:'flex',flexDirection:'column',gap:'6px'}}>
           <button onClick={openAdd} style={{width:'100%',padding:'8px',borderRadius:'9px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'12px',fontWeight:'500'}}>+ Add Prospect</button>
           <button onClick={()=>supabase.auth.signOut()} style={{width:'100%',padding:'6px',borderRadius:'9px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontSize:'11px'}}>Sign out</button>
+          <button onClick={async ()=>{
+            if(window.confirm('This will permanently delete your account and ALL your prospects. This cannot be undone. Are you sure?')) {
+              if(window.confirm('Last chance — are you absolutely sure? All data will be deleted forever.')) {
+                try {
+                  await supabase.from('prospects').delete().eq('user_id', session.user.id)
+                  await supabase.from('profiles').delete().eq('id', session.user.id)
+                  localStorage.removeItem(`rishta_mode_${session.user.id}`)
+                  await supabase.auth.signOut()
+                } catch(e) {
+                  alert('Something went wrong. Please try again.')
+                }
+              }
+            }
+          }} style={{width:'100%',padding:'6px',borderRadius:'9px',background:'transparent',color:'#B39DAE',border:'none',cursor:'pointer',fontSize:'10px',fontFamily:'DM Sans,sans-serif',marginTop:'2px'}}>
+            🗑️ Delete my account
+          </button>
         </div>
       </aside>
 
