@@ -986,6 +986,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
 
 // ── FUN ZONE ──────────────────────────────────────────────────────────────────
 function FunZone({ prospects, sections, mode }) {
+  const [hoveredCard, setHoveredCard] = React.useState(null)
   if(!prospects.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>Add some prospects first!</div>
   const active=prospects.filter(p=>p.status!=='eliminated')
   if(!active.length) return <div style={{color:'#7B5E6B',fontSize:'13px',padding:'2rem',textAlign:'center'}}>All eliminated! Add more.</div>
@@ -1038,9 +1039,7 @@ function FunZone({ prospects, sections, mode }) {
   const milIcon = mode==='he' ? '🏡' : '😅'
   
   const zodiacs={Aries:'♈',Taurus:'♉',Gemini:'♊',Cancer:'♋',Leo:'♌',Virgo:'♍',Libra:'♎',Scorpio:'♏',Sagittarius:'♐',Capricorn:'♑',Aquarius:'♒',Pisces:'♓'}
-  
-  const [hoveredCard, setHoveredCard] = React.useState(null)
-  
+
   return (
     <div>
       <div style={{marginBottom:'1.25rem'}}>
