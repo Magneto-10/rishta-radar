@@ -23,7 +23,7 @@ export default function Landing() {
           <span style={{color:'#C2185B',fontStyle:'italic'}}> perfect match</span>
         </h1>
         <p style={{fontSize:'16px',color:'#7B5E6B',maxWidth:'520px',margin:'0 auto 2.5rem',lineHeight:1.7}}>
-          Rishta season is chaotic. Spreadsheets, WhatsApp forwards, mammi's opinions — all over the place.
+          Arranged marriage can be chaotic. Spreadsheets, WhatsApp forwards, mammi's opinions — all over the place.
           Rishta Radar gives you one beautiful place to track, rate, and compare your prospects.
         </p>
         <button onClick={handleLogin} style={{padding:'14px 36px',borderRadius:'30px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'15px',fontWeight:'500',boxShadow:'0 4px 20px rgba(194,24,91,0.3)'}}>
