@@ -497,6 +497,32 @@ export default function Dashboard({ session, mode }) {
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>The Rishta Radar ✨</div>
               <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>{mode==='he' ? 'Organised, fun, and surprisingly scientific bride shortlisting' : 'Organised, fun, and surprisingly scientific groom shortlisting'}</div>
             </div>
+            {prospects.length === 0 && (
+              <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.75rem',marginBottom:'1.5rem',position:'relative'}}>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>👋 Welcome to Rishta Radar!</div>
+                <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.5rem',lineHeight:1.7}}>
+                  You're all set! Here's how to get started in 3 simple steps:
+                </div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:'1rem',marginBottom:'1.5rem'}}>
+                  {[
+                    {step:'1',icon:'➕',title:'Add a prospect',desc:'Click "+ Add Prospect" and fill in their details — name, job, city and more',color:'#C2185B'},
+                    {step:'2',icon:'⭐',title:'Rate them',desc:'Go to All Prospects and score them across 6 sections using the heart sliders',color:'#1565C0'},
+                    {step:'3',icon:'⚖️',title:'Compare & decide',desc:'Use Compare to see them side by side and Fun Zone for fun insights!',color:'#2E7D32'},
+                  ].map((s,i)=>(
+                    <div key={i} style={{background:'#fff',borderRadius:'12px',padding:'1rem',display:'flex',gap:'10px',alignItems:'flex-start'}}>
+                      <div style={{width:'28px',height:'28px',borderRadius:'50%',background:s.color,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:'700',flexShrink:0}}>{s.step}</div>
+                      <div>
+                        <div style={{fontSize:'13px',fontWeight:'600',color:'#2C1810',marginBottom:'4px'}}>{s.icon} {s.title}</div>
+                        <div style={{fontSize:'11px',color:'#7B5E6B',lineHeight:1.6}}>{s.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={openAdd} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                  ➕ Add your first prospect
+                </button>
+              </div>
+            )}
             <div className="rr-stats-grid" style={{display:'grid',gridTemplateColumns:isMobile?'repeat(3,1fr)':'repeat(5,1fr)',gap:'10px',marginBottom:'1.25rem'}}>
               {[{n:stats.total,l:'Total',c:'#C2185B'},{n:stats.shortlisted,l:'Shortlisted',c:'#C2185B'},{n:stats.met,l:'Met once',c:'#2E7D32'},{n:stats.pending,l:'Pending',c:'#F57F17'},{n:stats.eliminated,l:'Eliminated',c:'#C62828'}].map((s,i)=>(
                 <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',padding:'.75rem',textAlign:'center'}}>
