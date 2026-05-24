@@ -239,7 +239,11 @@ export default function Dashboard({ session, mode }) {
   }
   function deleteQ(si, qi) {
     if (sections[si].questions.length <= 2) {
-      alert('Minimum 2 questions per section are required!')
+      const toast = document.createElement('div')
+      toast.textContent = '⚠️ Minimum 2 questions per section required'
+      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2C1810;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);'
+      document.body.appendChild(toast)
+      setTimeout(() => document.body.removeChild(toast), 3000)
       return
     }
     if (!window.confirm('Delete this question?')) return
