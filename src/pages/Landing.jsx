@@ -91,8 +91,7 @@ export default function Landing() {
           {steps.map((s,i)=>(
             <div key={i} style={{background:'#fff',border:`2px solid ${s.color}22`,borderRadius:'20px',padding:'2rem',textAlign:'center',position:'relative'}}>
               <div style={{position:'absolute',top:'-16px',left:'50%',transform:'translateX(-50%)',width:'32px',height:'32px',borderRadius:'50%',background:s.color,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',fontWeight:'700'}}>{i+1}</div>
-              <div style={{fontSize:'36px',marginBottom:'1rem',marginTop:'.5rem'}}>{s.icon}</div>
-              <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#2C1810',marginBottom:'8px'}}>{s.title}</div>
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#2C1810',marginBottom:'8px',marginTop:'.5rem'}}>{s.title}</div>
               <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.7}}>{s.desc}</div>
             </div>
           ))}
