@@ -1269,9 +1269,11 @@ function AdminStats({ supabase }) {
           <div style={{fontFamily:'Playfair Display,serif',fontSize:'22px',color:'#2C1810'}}>📊 Admin Stats</div>
           <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'3px'}}>Last updated: {new Date().toLocaleString()}</div>
         </div>
-        <button onClick={fetchStats} style={{padding:'7px 14px',borderRadius:'18px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>
-          🔄 Refresh
-        </button>
+        <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+          <button onClick={fetchStats} style={{padding:'7px 14px',borderRadius:'18px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔄 Refresh</button>
+          <button onClick={()=>window.open('https://vercel.com/pranay-s-rishtaradar/rishta-radar/analytics','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#000',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>📊 Vercel Analytics</button>
+          <button onClick={()=>window.open('https://search.google.com/search-console','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#4285F4',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔍 Search Console</button>
+        </div>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:'.75rem',marginBottom:'1.5rem'}}>
