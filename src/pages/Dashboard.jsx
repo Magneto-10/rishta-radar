@@ -412,6 +412,7 @@ export default function Dashboard({ session, mode }) {
           {id:'leaderboard',icon:'🏆',label:'Leaderboard'},
           {id:'compare',icon:'⚖️',label:'Compare'},
           {id:'funzone',icon:'✨',label:'Fun Zone'},
+          {id:'feedback',icon:'📝',label:'Feedback'},
         ].map(n=>(
           <div key={n.id} onClick={()=>setPage(n.id)}
             style={{display:'flex',alignItems:'center',gap:'9px',padding:'8px 1rem',fontSize:'13px',color:page===n.id?theme.primary:'#7B5E6B',cursor:'pointer',borderRadius:'8px',margin:'1px 7px',background:page===n.id?theme.light:'transparent',fontWeight:page===n.id?'500':'400'}}>
@@ -480,6 +481,7 @@ export default function Dashboard({ session, mode }) {
             {id:'leaderboard',icon:'🏆',label:'Ranks'},
             {id:'compare',icon:'⚖️',label:'Compare'},
             {id:'funzone',icon:'✨',label:'Fun'},
+            {id:'feedback',icon:'📝',label:'Feedback'},
             {id:'account',icon:'⚙️',label:'Account'},
           ].map(n=>(
             <div key={n.id} onClick={()=>setPage(n.id)}
@@ -674,6 +676,7 @@ export default function Dashboard({ session, mode }) {
         {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} />}
         {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
         {page==='admin' && session.user.email === 'pranay.dhone1025@gmail.com' && <AdminStats supabase={supabase} />}
+        {page==='feedback' && <FeedbackForm session={session} mode={mode} />}
         {page==='account' && (
           <div style={{padding:'2rem 1rem'}}>
             <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810',marginBottom:'1.5rem'}}>⚙️ Account</div>
@@ -1427,6 +1430,95 @@ function AdminStats({ supabase }) {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function FeedbackForm({ session, mode }) {
+  const [type, setType] = React.useState('')
+  const [message, setMessage] = React.useState('')
+  const [submitting, setSubmitting] = React.useState(false)
+  const [submitted, setSubmitted] = React.useState(false)
+  const [error, setError] = React.useState(null)
+
+  async function handleSubmit() {
+    if (!type) { alert('Please select a feedback type'); return }
+    if (!message.trim()) { alert('Please enter your message'); return }
+    setSubmitting(true)
+    setError(null)
+    try {
+      const res = await fetch('https://formspree.io/f/mqejdqwj', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          feedback_type: type,
+          message: message,
+          user_email: session?.user?.email || 'Unknown',
+          user_mode: mode === 'she' ? 'Bride-to-be (She)' : 'Groom-to-be (He)',
+        })
+      })
+      if (res.ok) {
+        setSubmitted(true)
+        setType('')
+        setMessage('')
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } catch(e) {
+      setError('Something went wrong. Please try again.')
+    }
+    setSubmitting(false)
+  }
+
+  if (submitted) return (
+    <div style={{textAlign:'center',padding:'4rem 2rem'}}>
+      <div style={{fontSize:'48px',marginBottom:'1rem'}}>🎉</div>
+      <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810',marginBottom:'.75rem'}}>Thank you!</div>
+      <div style={{fontSize:'14px',color:'#7B5E6B',marginBottom:'2rem'}}>Your feedback helps us make Rishta Radar better for everyone.</div>
+      <button onClick={()=>setSubmitted(false)} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px'}}>
+        Send another feedback
+      </button>
+    </div>
+  )
+
+  return (
+    <div>
+      <div style={{marginBottom:'1.25rem'}}>
+        <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>📝 Feedback</div>
+        <div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Help us make Rishta Radar better!</div>
+      </div>
+
+      <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.5rem',maxWidth:'600px'}}>
+        <div style={{marginBottom:'1.25rem'}}>
+          <label style={{fontSize:'12px',fontWeight:'500',color:'#7B5E6B',display:'block',marginBottom:'8px'}}>Type of feedback</label>
+          <select value={type} onChange={e=>setType(e.target.value)}
+            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+            <option value=''>Select type...</option>
+            <option value='Bug Report'>🐛 Bug Report — Something is broken</option>
+            <option value='Feature Request'>✨ Feature Request — I want something new</option>
+            <option value='General Feedback'>💬 General Feedback — Just sharing thoughts</option>
+            <option value='I Love It'>💗 I Love It — Positive feedback</option>
+          </select>
+        </div>
+
+        <div style={{marginBottom:'1.25rem'}}>
+          <label style={{fontSize:'12px',fontWeight:'500',color:'#7B5E6B',display:'block',marginBottom:'8px'}}>Your message</label>
+          <textarea value={message} onChange={e=>setMessage(e.target.value)}
+            placeholder="Tell us more — what happened, what you'd like to see, or just say hi!"
+            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:'#FFF0F5',minHeight:'120px',resize:'vertical',lineHeight:1.6,boxSizing:'border-box'}} />
+        </div>
+
+        {error && <div style={{fontSize:'12px',color:'#C62828',marginBottom:'1rem'}}>{error}</div>}
+
+        <button onClick={handleSubmit} disabled={submitting}
+          style={{padding:'10px 28px',borderRadius:'20px',background:submitting?'#f5e6ec':'#C2185B',color:submitting?'#B39DAE':'#fff',border:'none',cursor:submitting?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+          {submitting ? 'Sending...' : 'Send Feedback →'}
+        </button>
+
+        <div style={{fontSize:'11px',color:'#B39DAE',marginTop:'12px'}}>
+          Your email ({session?.user?.email}) will be included so we can follow up if needed.
         </div>
       </div>
     </div>
