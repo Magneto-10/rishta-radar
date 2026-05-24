@@ -97,9 +97,10 @@ const SWATCHES = ['#FCE4EC','#F8BBD0','#FFF0F5','#FFF8E1','#FFF3E0','#FAEEDA','#
 const EMOJIS = ['👨‍💻','👨‍⚕️','👨‍🍳','👨‍🎨','👨‍🏫','👨‍💼','👨‍🔬','👨‍✈️','👨‍⚖️','🧔','👱','🙋','🤵','👮','👷','🌟','✨','🎯','🚀','🏆','💡','🦁','🐯','🦊','🦅','🦋','💎','👑','🎸','⚽','🏋️','🎮','📚','🎭','🌈','🍕','☕','🎻']
 const HE_EMOJIS = ['👩','👩‍💼','👩‍⚕️','👩‍🍳','👩‍🎨','👩‍🏫','👩‍🔬','👩‍✈️','👩‍⚖️','👱‍♀️','💁‍♀️','🙋‍♀️','👰','💃','🧕','👸','🧑‍💻','🌟','✨','🎯','🦋','🌸','🌺','🌻','💎','👑','🎭','🎨','🎵','☕','🍕','🌈','🦊','🐱','🦁','🐯','🌙','⭐','🎪']
 
-function loadSections() {
+function loadSections(userId) {
   try {
-    const saved = localStorage.getItem('rishta_sections_v4')
+    const key = `rishta_sections_v4_${userId}`
+    const saved = localStorage.getItem(key)
     if (saved) {
       const parsed = JSON.parse(saved)
       return DEFAULT_SECTIONS.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
@@ -107,8 +108,8 @@ function loadSections() {
   } catch(e) {}
   return JSON.parse(JSON.stringify(DEFAULT_SECTIONS))
 }
-function saveSections(secs, mode) {
-  const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
+function saveSections(secs, mode, userId) {
+  const key = mode === 'he' ? `rishta_sections_he_v1_${userId}` : `rishta_sections_v4_${userId}`
   try { localStorage.setItem(key, JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
 }
 
@@ -186,7 +187,7 @@ export default function Dashboard({ session, mode }) {
     blush: '#FFF0F5',
     accent: '#E91E8C'
   }
-  const [sections, setSections] = useState(loadSections)
+  const [sections, setSections] = useState(() => loadSections(session.user.id))
   const [prospects, setProspects] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState('overview')
@@ -224,7 +225,7 @@ export default function Dashboard({ session, mode }) {
   }, []) // eslint-disable-line
 
   useEffect(() => {
-    const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
+    const key = mode === 'he' ? `rishta_sections_he_v1_${session.user.id}` : `rishta_sections_v4_${session.user.id}`
     try {
       const saved = localStorage.getItem(key)
       if (saved) {
@@ -251,7 +252,7 @@ export default function Dashboard({ session, mode }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  function updateSections(newSecs) { setSections(newSecs); saveSections(newSecs, mode) }
+  function updateSections(newSecs) { setSections(newSecs); saveSections(newSecs, mode, session.user.id) }
 
   function editQLabel(si, qi) {
     const newLabel = window.prompt('Edit question text:', sections[si].questions[qi].label)
@@ -435,7 +436,7 @@ export default function Dashboard({ session, mode }) {
 
         <div style={{padding:'.6rem 1rem',borderTop:'1px solid rgba(194,24,91,0.13)',display:'flex',flexDirection:'column',gap:'6px'}}>
           <button onClick={openAdd} style={{width:'100%',padding:'8px',borderRadius:'9px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'12px',fontWeight:'500'}}>+ Add Prospect</button>
-          <button onClick={()=>supabase.auth.signOut()} style={{width:'100%',padding:'6px',borderRadius:'9px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontSize:'11px'}}>Sign out</button>
+          <button onClick={()=>{localStorage.removeItem(`rishta_sections_v4_${session.user.id}`);localStorage.removeItem(`rishta_sections_he_v1_${session.user.id}`);supabase.auth.signOut()}} style={{width:'100%',padding:'6px',borderRadius:'9px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontSize:'11px'}}>Sign out</button>
           <button onClick={async ()=>{
             if(window.confirm('This will permanently delete your account and ALL your prospects. This cannot be undone. Are you sure?')) {
               if(window.confirm('Last chance — are you absolutely sure? All data will be deleted forever.')) {
@@ -443,6 +444,8 @@ export default function Dashboard({ session, mode }) {
                   await supabase.from('prospects').delete().eq('user_id', session.user.id)
                   await supabase.from('profiles').delete().eq('id', session.user.id)
                   localStorage.removeItem(`rishta_mode_${session.user.id}`)
+                  localStorage.removeItem(`rishta_sections_v4_${session.user.id}`)
+                  localStorage.removeItem(`rishta_sections_he_v1_${session.user.id}`)
                   await supabase.auth.signOut()
                 } catch(e) {
                   alert('Something went wrong. Please try again.')
