@@ -534,15 +534,42 @@ export default function Dashboard({ session, mode }) {
                 </button>
               </div>
             )}
-            {prospects.length > 0 && prospects.some(p => !isUnrated(p, sections)) && prospects.length < 2 && (
+            {prospects.length === 1 && prospects.every(p => !isUnrated(p, sections)) && (
               <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
-                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>🎉 Amazing! Add one more to compare</div>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>🎉 Amazing! Now add one more</div>
                 <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.25rem',lineHeight:1.7}}>
-                  You've rated your first prospect! Add at least one more so you can use the <strong>Compare</strong> feature to see them side by side.
+                  You've rated your first prospect! Add at least one more so you can use the <strong>Compare</strong> feature.
                 </div>
                 <button onClick={openAdd} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
                   ➕ Add another prospect
                 </button>
+              </div>
+            )}
+            {prospects.length >= 2 && prospects.some(p => isUnrated(p, sections)) && (
+              <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>⭐ Rate all your prospects</div>
+                <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.25rem',lineHeight:1.7}}>
+                  You have unrated prospects! Rate all of them to get accurate scores and use the Compare feature effectively.
+                </div>
+                <button onClick={()=>setPage('prospects')} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                  ⭐ Rate now →
+                </button>
+              </div>
+            )}
+            {prospects.length >= 2 && prospects.every(p => !isUnrated(p, sections)) && (
+              <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>🚀 You're ready to compare!</div>
+                <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.25rem',lineHeight:1.7}}>
+                  All prospects are rated! Now use <strong>Compare</strong> to see them side by side and <strong>Fun Zone</strong> for fun insights!
+                </div>
+                <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+                  <button onClick={()=>setPage('compare')} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                    ⚖️ Try Compare →
+                  </button>
+                  <button onClick={()=>setPage('funzone')} style={{padding:'10px 24px',borderRadius:'20px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                    ✨ Fun Zone →
+                  </button>
+                </div>
               </div>
             )}
             <div className="rr-stats-grid" style={{display:'grid',gridTemplateColumns:isMobile?'repeat(3,1fr)':'repeat(5,1fr)',gap:'10px',marginBottom:'1.25rem'}}>
