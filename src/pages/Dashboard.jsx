@@ -352,7 +352,7 @@ export default function Dashboard({ session, mode }) {
   const favourites = prospects.filter(p=>p.status==='favourite')
 
   const familyFields = [
-    {id:'famtype',label:'Family type',opts:['','Joint family','Nuclear family','Lives alone','Joint now, plans to go nuclear','Stays with parents only']},
+    ...(mode !== 'he' ? [{id:'famtype',label:'Family type',opts:['','Joint family','Nuclear family','Lives alone','Joint now, plans to go nuclear','Stays with parents only']}] : []),
     {id:'famsize',label:'Family members',opts:['','Just her (1)','2–3 members','4–5 members','6–7 members','8+ members']},
     {id:'parents',label:'Parents situation',opts:['','Both parents with her','Parents in hometown','Single parent','Parents retired independently','Parents abroad']},
     {id:'siblings',label:'Siblings',opts:['','Only child','1 sibling','2 siblings','3+ siblings']},
@@ -667,7 +667,7 @@ export default function Dashboard({ session, mode }) {
               )}
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-              {[{id:'name',label:'Name *',placeholder:'e.g. Rahul S.'},{id:'age',label:'Age',placeholder:'28',type:'number'},{id:'city',label:'City',placeholder:'Mumbai'},{id:'hometown',label:'Hometown',placeholder:'Jaipur'},{id:'job',label:'Job title',placeholder:'Software Engineer'},{id:'company',label:'Company',placeholder:'Google, Self, etc.'},{id:'edu',label:'Education',placeholder:'IIT, MBA, MBBS...'}].map(f=>(
+              {[{id:'name',label:'Name *',placeholder:mode==='he'?'e.g. Priya S.':'e.g. Rahul S.'},{id:'age',label:'Age',placeholder:'28',type:'number'},{id:'city',label:'City',placeholder:'Mumbai'},{id:'hometown',label:'Hometown',placeholder:'Jaipur'},{id:'job',label:'Job title',placeholder:'Software Engineer'},{id:'company',label:'Company',placeholder:'Google, Self, etc.'},{id:'edu',label:'Education',placeholder:'IIT, MBA, MBBS...'}].map(f=>(
                 <div key={f.id} style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                   <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label}</label>
                   <input value={form[f.id]||''} onChange={fi(f.id)} placeholder={f.placeholder} type={f.type||'text'}
