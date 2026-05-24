@@ -37,15 +37,12 @@ export default function App() {
       email: session.user.email,
     }, { onConflict: 'id' })
 
-    console.log('Upsert error:', upsertError)
-
     await supabase.from('profiles').update({
       full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
       google_id: session.user.user_metadata?.sub || null,
     }).eq('id', session.user.id)
 
-    const { data, error } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
-    console.log('Profile data:', data, 'Error:', error)
+    const { data } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
     if (data?.mode) {
       setMode(data.mode)
       localStorage.setItem(`rishta_mode_${session.user.id}`, data.mode)
