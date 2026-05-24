@@ -153,10 +153,10 @@ const mobileCSS = `
 const heartThumb = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23C2185B' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E")`
 
 const heartCSS = `
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:transparent;cursor:pointer;margin-top:-10px;background-image:${heartThumb};background-repeat:no-repeat;background-position:center;background-size:22px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;border:none;background:transparent;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;background:transparent;cursor:pointer;margin-top:-12px;background-image:${heartThumb};background-repeat:no-repeat;background-position:center;background-size:26px;border:none;box-shadow:none;outline:none;}
 input[type=range]::-moz-range-thumb{width:24px;height:24px;border:none;border-radius:0;background:transparent;cursor:pointer;background-image:${heartThumb};background-repeat:no-repeat;background-position:center;background-size:22px}
-input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:transparent;}
 .q-edit-btn{font-size:14px;cursor:pointer;opacity:0;margin-left:6px;transition:opacity .15s;vertical-align:middle;padding:2px 5px;border-radius:5px;line-height:1}
 .q-edit-btn:hover{background:#FCE4EC}
 .q-row:hover .q-edit-btn{opacity:1}
@@ -1103,7 +1103,7 @@ function FunZone({ prospects, sections, mode }) {
         ))}
       </div>
       
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px',marginBottom:'1.25rem'}}>
+      <div style={{display:'grid',gridTemplateColumns:window.innerWidth<1024?'1fr':'1fr 1fr',gap:'14px',marginBottom:'1.25rem'}}>
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>{milIcon} {milLabel} Meter</div>
           {milSorted.map(p=>{const v=milScore(p),c=v>=80?'#4CAF50':v>=65?'#FF9800':'#F44336',em=v>=80?'😍':v>=65?'🙂':'😬';return(
@@ -1137,7 +1137,7 @@ function FunZone({ prospects, sections, mode }) {
         </div>
       </div>
       
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
+      <div style={{display:'grid',gridTemplateColumns:window.innerWidth<1024?'1fr':'1fr 1fr',gap:'14px'}}>
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>♾️ Zodiac Vibes</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'7px'}}>
