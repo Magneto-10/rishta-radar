@@ -204,6 +204,17 @@ export default function Dashboard({ session, mode }) {
   const [form, setForm] = useState({})
   const [favModal, setFavModal] = useState(null)
 
+  function showToast(message, color='#2C1810') {
+    const existing = document.getElementById('rr-toast')
+    if (existing) document.body.removeChild(existing)
+    const toast = document.createElement('div')
+    toast.id = 'rr-toast'
+    toast.textContent = message
+    toast.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;`
+    document.body.appendChild(toast)
+    setTimeout(() => { if(document.getElementById('rr-toast')) document.body.removeChild(toast) }, 3000)
+  }
+
   const fetchProspects = useCallback(async () => {
     const { data } = await supabase.from('prospects').select('*').order('created_at',{ascending:false})
     setProspects(data || [])
@@ -239,19 +250,16 @@ export default function Dashboard({ session, mode }) {
   }
   function deleteQ(si, qi) {
     if (sections[si].questions.length <= 2) {
-      const toast = document.createElement('div')
-      toast.textContent = '⚠️ Minimum 2 questions per section required'
-      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2C1810;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);'
-      document.body.appendChild(toast)
-      setTimeout(() => document.body.removeChild(toast), 3000)
+      showToast('⚠️ Minimum 2 questions per section required', '#C2185B')
       return
     }
     if (!window.confirm('Delete this question?')) return
-    updateSections(sections.map((s,i) => i===si ? {...s, questions: s.questions.filter((_,j)=>j!==qi)} : s))
+    const newSections = sections.map((s,i) => i===si ? {...s, questions: s.questions.filter((_,j)=>j!==qi)} : s)
+    updateSections(newSections)
   }
   function addQ(si) {
     if (sections[si].questions.length >= 8) {
-      alert('Maximum 8 questions per section reached!')
+      showToast('⚠️ Maximum 8 questions per section reached', '#C2185B')
       return
     }
     const label = window.prompt('Enter your new question:')
