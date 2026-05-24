@@ -519,7 +519,7 @@ export default function Dashboard({ session, mode }) {
                 const compat=s>=85?{stars:'★★★★★'}:s>=78?{stars:'★★★★☆'}:s>=68?{stars:'★★★☆☆'}:{stars:'★★☆☆☆'}
                 return (
                   <div key={p.id} style={{display:'flex',alignItems:'center',gap:'10px',padding:'11px 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)',transition:'background .15s'}}
-                    onMouseEnter={e=>e.currentTarget.style.background='#FFF0F5'}
+                    onMouseEnter={e=>e.currentTarget.style.background=mode==='he'?'#E3F2FD':'#FFF0F5'}
                     onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                     <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',width:'24px',textAlign:'center',color:rc,flexShrink:0}}>{i+1}</div>
                     <div style={{fontSize:'24px',background:p.color,borderRadius:'50%',width:'40px',height:'40px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{p.emoji}</div>
@@ -980,7 +980,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
       <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem',marginBottom:'1rem'}}>
         <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'10px'}}>Select prospects</div>
         <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'10px'}}>
-          {nonElim.map(p=>{const checked=cmpSelected.includes(p.id),s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections);return(<div key={p.id} onClick={()=>toggle(p.id)} style={{display:'flex',alignItems:'center',gap:'7px',padding:'6px 12px',borderRadius:'20px',cursor:'pointer',border:`2px solid ${checked?'#C2185B':'rgba(194,24,91,0.13)'}`,background:checked?p.color:'#fff',transition:'all .15s'}}><span style={{fontSize:'16px'}}>{p.emoji}</span><span style={{fontSize:'12px',fontWeight:checked?'600':'400',color:'#2C1810'}}>{p.name}</span><span style={{fontSize:'10px',padding:'1px 6px',borderRadius:'8px',background:unr?'#F5F5F5':st.bg,color:unr?'#B39DAE':st.col}}>{unr?'—':s}</span></div>)})}
+          {nonElim.map(p=>{const checked=cmpSelected.includes(p.id),s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections);return(<div key={p.id} onClick={()=>toggle(p.id)} style={{display:'flex',alignItems:'center',gap:'7px',padding:'6px 12px',borderRadius:'20px',cursor:'pointer',border:checked?`2px solid ${mode==='he'?'#1565C0':'#C2185B'}`:'2px solid rgba(194,24,91,0.13)',background:checked?p.color:'#fff',transition:'all .15s'}}><span style={{fontSize:'16px'}}>{p.emoji}</span><span style={{fontSize:'12px',fontWeight:checked?'600':'400',color:'#2C1810'}}>{p.name}</span><span style={{fontSize:'10px',padding:'1px 6px',borderRadius:'8px',background:unr?'#F5F5F5':st.bg,color:unr?'#B39DAE':st.col}}>{unr?'—':s}</span></div>)})}
         </div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
           <button onClick={()=>{setCmpQualOpen(true);setCmpQuantOpen(true)}} disabled={cmpSelected.length<2} style={{padding:'7px 14px',borderRadius:'18px',background:cmpSelected.length<2?'#f5e6ec':'#C2185B',color:cmpSelected.length<2?'#B39DAE':'#fff',border:'none',cursor:cmpSelected.length<2?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px',fontWeight:'500'}}>Compare {cmpSelected.length} prospects</button>
@@ -990,7 +990,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
       </div>
       {active.length>=2&&(<>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden',marginBottom:'12px'}}>
-          <div onClick={()=>setCmpQualOpen(!cmpQualOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#FFF0F5',borderBottom:cmpQualOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
+          <div onClick={()=>setCmpQualOpen(!cmpQualOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#E3F2FD':'#FFF0F5',borderBottom:cmpQualOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
             <span style={{fontSize:'16px'}}>📋</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:'#2C1810'}}>Background & Family Info</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Job, income, family type, city plans</div></div>
             <span style={{fontSize:'13px',color:'#B39DAE',display:'inline-block',transform:cmpQualOpen?'rotate(0)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
           </div>
@@ -1000,7 +1000,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
           </table></div>)}
         </div>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
-          <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:'#FCE4EC',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
+          <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#BBDEFB':'#FCE4EC',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
             <span style={{fontSize:'16px'}}>📊</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:'#880E4F'}}>Scores & Ratings</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Section scores and individual question ratings</div></div>
             <span style={{fontSize:'13px',color:'#B39DAE',display:'inline-block',transform:cmpQuantOpen?'rotate(0)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
           </div>
@@ -1140,7 +1140,7 @@ function FunZone({ prospects, sections, mode }) {
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
           <div style={{fontSize:'10px',fontWeight:'500',textTransform:'uppercase',letterSpacing:'.9px',color:'#B39DAE',marginBottom:'.85rem'}}>♾️ Zodiac Vibes</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'7px'}}>
-            {prospects.map(p=><div key={p.id} style={{background:'#FCE4EC',borderRadius:'9px',padding:'8px',textAlign:'center'}}><div style={{fontSize:'18px'}}>{zodiacs[p.zodiac]||'🌟'}</div><div style={{fontSize:'10px',color:'#880E4F'}}>{p.zodiac||'?'}</div><div style={{fontSize:'9px',color:'#7B5E6B'}}>{p.name}</div></div>)}
+            {prospects.map(p=><div key={p.id} style={{background:mode==='he'?'#E3F2FD':'#FCE4EC',borderRadius:'9px',padding:'8px',textAlign:'center'}}><div style={{fontSize:'18px'}}>{zodiacs[p.zodiac]||'🌟'}</div><div style={{fontSize:'10px',color:mode==='he'?'#1565C0':'#880E4F'}}>{p.zodiac||'?'}</div><div style={{fontSize:'9px',color:'#7B5E6B'}}>{p.name}</div></div>)}
           </div>
           <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'8px',fontStyle:'italic'}}>Just for fun 🙏</div>
         </div>
