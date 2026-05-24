@@ -31,14 +31,21 @@ export default function App() {
       setMode(cachedMode)
       setLoading(false)
     }
-    await supabase.from('profiles').upsert({
+
+    const { error: upsertError } = await supabase.from('profiles').upsert({
       id: session.user.id,
       email: session.user.email,
-      full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-      google_id: session.user.user_metadata?.sub || session.user.id,
-    }, { onConflict: 'id', ignoreDuplicates: false })
+    }, { onConflict: 'id' })
 
-    const { data } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
+    console.log('Upsert error:', upsertError)
+
+    await supabase.from('profiles').update({
+      full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+      google_id: session.user.user_metadata?.sub || null,
+    }).eq('id', session.user.id)
+
+    const { data, error } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
+    console.log('Profile data:', data, 'Error:', error)
     if (data?.mode) {
       setMode(data.mode)
       localStorage.setItem(`rishta_mode_${session.user.id}`, data.mode)
