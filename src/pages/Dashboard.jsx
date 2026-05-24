@@ -641,7 +641,7 @@ export default function Dashboard({ session, mode }) {
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>Height</label>
                 <select value={form.height||''} onChange={fi('height')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
                   <option value="">Not specified</option>
-                  {["4'11\" (150 cm)","5'0\" (152 cm)","5'1\" (155 cm)","5'2\" (157 cm)","5'3\" (160 cm)","5'4\" (163 cm)","5'5\" (165 cm)","5'6\" (168 cm)","5'7\" (170 cm)","5'8\" (173 cm)","5'9\" (175 cm)","5'10\" (178 cm)","5'11\" (180 cm)","6'0\" (183 cm)","6'1\" (185 cm)","6'2\" (188 cm)","6'3\" (191 cm)","6'4\" (193 cm)","6'5\" (196 cm)"].map(h=><option key={h}>{h}</option>)}
+                  {["4'5\" (135 cm)","4'6\" (137 cm)","4'7\" (140 cm)","4'8\" (142 cm)","4'9\" (145 cm)","4'10\" (147 cm)","4'11\" (150 cm)","5'0\" (152 cm)","5'1\" (155 cm)","5'2\" (157 cm)","5'3\" (160 cm)","5'4\" (163 cm)","5'5\" (165 cm)","5'6\" (168 cm)","5'7\" (170 cm)","5'8\" (173 cm)","5'9\" (175 cm)","5'10\" (178 cm)","5'11\" (180 cm)","6'0\" (183 cm)","6'1\" (185 cm)","6'2\" (188 cm)","6'3\" (191 cm)","6'4\" (193 cm)","6'5\" (196 cm)","6'6\" (198 cm)","6'7\" (201 cm)","6'8\" (203 cm)","6'9\" (206 cm)","6'10\" (208 cm)","6'11\" (211 cm)","7'0\" (213 cm)","Other / Not specified"].map(h=><option key={h}>{h}</option>)}
                 </select>
               </div>
               <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
