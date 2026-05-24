@@ -3,6 +3,7 @@ import { supabase } from './lib/supabase'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
 import Onboarding from './pages/Onboarding'
+import { Analytics } from '@vercel/analytics/react'
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -50,7 +51,7 @@ export default function App() {
     </div>
   )
 
-  if (!session) return <Landing />
-  if (!mode) return <Onboarding session={session} onComplete={handleOnboardingComplete} />
-  return <Dashboard session={session} mode={mode} />
+  if (!session) return <><Landing /><Analytics /></>
+  if (!mode) return <><Onboarding session={session} onComplete={handleOnboardingComplete} /><Analytics /></>
+  return <><Dashboard session={session} mode={mode} /><Analytics /></>
 }
