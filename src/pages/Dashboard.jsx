@@ -1298,8 +1298,8 @@ function AdminStats({ supabase }) {
           <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
             <thead>
               <tr style={{background:'#FFF8F0'}}>
-                {['Email','Mode','Prospects','Joined'].map(h=>(
-                  <th key={h} style={{textAlign:h==='Email'?'left':'center',padding:'9px 1rem',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>{h}</th>
+                {['Email','Name','Mode','Prospects','Joined'].map(h=>(
+                  <th key={h} style={{textAlign:h==='Email'||h==='Name'?'left':'center',padding:'9px 1rem',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -1307,6 +1307,7 @@ function AdminStats({ supabase }) {
               {users.map((u,i)=>(
                 <tr key={u.id} style={{borderBottom:'1px solid rgba(194,24,91,0.08)',background:i%2===0?'#fff':'#FFFAF8'}}>
                   <td style={{padding:'9px 1rem',color:'#2C1810'}}>{u.email||'—'}</td>
+                  <td style={{padding:'9px 1rem',color:'#7B5E6B'}}>{u.full_name||'—'}</td>
                   <td style={{textAlign:'center',padding:'9px 1rem'}}>
                     <span style={{fontSize:'12px',padding:'2px 9px',borderRadius:'10px',background:u.mode==='she'?'#FCE4EC':u.mode==='he'?'#E3F2FD':'#F5F5F5',color:u.mode==='she'?'#C2185B':u.mode==='he'?'#1565C0':'#9E9E9E'}}>
                       {u.mode==='she'?'💗 Bride-to-be':u.mode==='he'?'💙 Groom-to-be':'Not set'}

@@ -31,6 +31,13 @@ export default function App() {
       setMode(cachedMode)
       setLoading(false)
     }
+    await supabase.from('profiles').upsert({
+      id: session.user.id,
+      email: session.user.email,
+      full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+      google_id: session.user.user_metadata?.sub || session.user.id,
+    }, { onConflict: 'id', ignoreDuplicates: false })
+
     const { data } = await supabase.from('profiles').select('mode').eq('id', session.user.id).single()
     if (data?.mode) {
       setMode(data.mode)
