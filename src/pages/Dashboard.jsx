@@ -390,7 +390,7 @@ export default function Dashboard({ session, mode }) {
         borderRight:'1px solid rgba(194,24,91,0.13)',
         display:'flex',flexDirection:'column',
         position:isMobile?'fixed':'sticky',
-        top:0,height:'100vh',overflowY:'auto',
+        top:0,height:'100vh',overflowY:'scroll',WebkitOverflowScrolling:'touch',
         zIndex:isMobile?100:'auto',
         transform:isMobile?(sidebarOpen?'translateX(0)':'translateX(-100%)'):'none',
         transition:'transform 0.25s ease',
