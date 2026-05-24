@@ -523,6 +523,28 @@ export default function Dashboard({ session, mode }) {
                 </button>
               </div>
             )}
+            {prospects.length > 0 && prospects.every(p => isUnrated(p, sections)) && (
+              <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>⭐ Great! Now rate your prospect</div>
+                <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.25rem',lineHeight:1.7}}>
+                  You've added your first prospect! Now go to <strong>All Prospects</strong> and rate them across 6 sections using the heart sliders. The more you rate, the better your scores!
+                </div>
+                <button onClick={()=>setPage('prospects')} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                  ⭐ Rate now →
+                </button>
+              </div>
+            )}
+            {prospects.length > 0 && prospects.some(p => !isUnrated(p, sections)) && prospects.length < 2 && (
+              <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',border:'1px solid rgba(194,24,91,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
+                <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2C1810',marginBottom:'.5rem'}}>🎉 Amazing! Add one more to compare</div>
+                <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.25rem',lineHeight:1.7}}>
+                  You've rated your first prospect! Add at least one more so you can use the <strong>Compare</strong> feature to see them side by side.
+                </div>
+                <button onClick={openAdd} style={{padding:'10px 24px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+                  ➕ Add another prospect
+                </button>
+              </div>
+            )}
             <div className="rr-stats-grid" style={{display:'grid',gridTemplateColumns:isMobile?'repeat(3,1fr)':'repeat(5,1fr)',gap:'10px',marginBottom:'1.25rem'}}>
               {[{n:stats.total,l:'Total',c:'#C2185B'},{n:stats.shortlisted,l:'Shortlisted',c:'#C2185B'},{n:stats.met,l:'Met once',c:'#2E7D32'},{n:stats.pending,l:'Pending',c:'#F57F17'},{n:stats.eliminated,l:'Eliminated',c:'#C62828'}].map((s,i)=>(
                 <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',padding:'.75rem',textAlign:'center'}}>
