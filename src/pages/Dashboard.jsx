@@ -479,6 +479,7 @@ export default function Dashboard({ session, mode }) {
             {id:'leaderboard',icon:'🏆',label:'Ranks'},
             {id:'compare',icon:'⚖️',label:'Compare'},
             {id:'funzone',icon:'✨',label:'Fun'},
+            {id:'account',icon:'⚙️',label:'Account'},
           ].map(n=>(
             <div key={n.id} onClick={()=>setPage(n.id)}
               style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'2px',cursor:'pointer',padding:'4px 8px',borderRadius:'10px',background:page===n.id?theme.light:'transparent'}}>
@@ -597,6 +598,28 @@ export default function Dashboard({ session, mode }) {
         {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} />}
         {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
         {page==='admin' && session.user.email === 'pranay.dhone1025@gmail.com' && <AdminStats supabase={supabase} />}
+        {page==='account' && (
+          <div style={{padding:'2rem 1rem'}}>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810',marginBottom:'1.5rem'}}>⚙️ Account</div>
+            <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.5rem'}}>
+              <div style={{fontSize:'14px',color:'#2C1810',marginBottom:'4px',fontWeight:'500'}}>{session.user.email}</div>
+              <div style={{fontSize:'12px',color:'#7B5E6B',marginBottom:'1.5rem'}}>Signed in with Google</div>
+              <button onClick={()=>supabase.auth.signOut()} style={{width:'100%',padding:'10px',borderRadius:'10px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',marginBottom:'8px'}}>Sign out</button>
+              <button onClick={async()=>{
+                if(window.confirm('This will permanently delete your account and ALL your prospects. Are you sure?')) {
+                  if(window.confirm('Last chance — all data will be deleted forever.')) {
+                    await supabase.from('prospects').delete().eq('user_id', session.user.id)
+                    await supabase.from('profiles').delete().eq('id', session.user.id)
+                    localStorage.removeItem(`rishta_mode_${session.user.id}`)
+                    await supabase.auth.signOut()
+                  }
+                }
+              }} style={{width:'100%',padding:'10px',borderRadius:'10px',background:'#FFEBEE',color:'#C62828',border:'1px solid #ef9a9a',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px'}}>
+                🗑️ Delete my account
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* FAV SUMMARY MODAL */}
