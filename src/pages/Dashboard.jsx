@@ -418,6 +418,12 @@ export default function Dashboard({ session, mode }) {
             <span style={{fontSize:'15px'}}>{n.icon}</span>{n.label}
           </div>
         ))}
+        {session.user.email === 'pranay.dhone1025@gmail.com' && (
+          <div onClick={()=>setPage('admin')}
+            style={{display:'flex',alignItems:'center',gap:'9px',padding:'8px 1rem',fontSize:'13px',color:page==='admin'?'#C2185B':'#7B5E6B',cursor:'pointer',borderRadius:'8px',margin:'1px 7px',background:page==='admin'?'#FFF0F5':'transparent',fontWeight:page==='admin'?'500':'400'}}>
+            <span style={{fontSize:'15px'}}>📊</span>Admin Stats
+          </div>
+        )}
 
         <div style={{padding:'.75rem 1rem .3rem',fontSize:'9px',fontWeight:'500',color:'#B39DAE',letterSpacing:'1px',textTransform:'uppercase'}}>⭐ Favourites</div>
         <div style={{flex:1,padding:'.4rem 7px .75rem',overflowY:'auto'}}>
@@ -590,6 +596,7 @@ export default function Dashboard({ session, mode }) {
 
         {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} />}
         {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
+        {page==='admin' && session.user.email === 'pranay.dhone1025@gmail.com' && <AdminStats supabase={supabase} />}
       </main>
 
       {/* FAV SUMMARY MODAL */}
@@ -1205,6 +1212,104 @@ function FunZone({ prospects, sections, mode }) {
               <span style={{fontSize:'14px',fontWeight:'600',color:unr?'#B39DAE':st.col}}>{unr?'—':s}</span>
             </div>
           )})}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AdminStats({ supabase }) {
+  const [stats, setStats] = React.useState(null)
+  const [users, setUsers] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => { fetchStats() }, []) // eslint-disable-line
+
+  async function fetchStats() {
+    setLoading(true)
+    const { data: profiles } = await supabase.from('profiles').select('*')
+    const { data: prospects } = await supabase.from('prospects').select('*')
+    const userMap = {}
+    profiles?.forEach(p => { userMap[p.id] = { ...p, prospectCount: 0 } })
+    prospects?.forEach(p => { if (userMap[p.user_id]) userMap[p.user_id].prospectCount++ })
+    const userList = Object.values(userMap).sort((a,b) => b.prospectCount - a.prospectCount)
+    setStats({
+      totalUsers: profiles?.length || 0,
+      totalProspects: prospects?.length || 0,
+      sheUsers: profiles?.filter(p => p.mode === 'she').length || 0,
+      heUsers: profiles?.filter(p => p.mode === 'he').length || 0,
+      noMode: profiles?.filter(p => !p.mode).length || 0,
+      avgProspects: prospects?.length && profiles?.length ? (prospects.length / profiles.length).toFixed(1) : 0,
+    })
+    setUsers(userList)
+    setLoading(false)
+  }
+
+  if (loading) return (
+    <div style={{padding:'3rem',textAlign:'center',color:'#C2185B',fontFamily:'DM Sans,sans-serif'}}>
+      <div style={{fontSize:'32px',marginBottom:'1rem'}}>📊</div>
+      <div>Loading stats...</div>
+    </div>
+  )
+
+  return (
+    <div style={{padding:'1.5rem',fontFamily:'DM Sans,sans-serif'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'1.5rem'}}>
+        <div>
+          <div style={{fontFamily:'Playfair Display,serif',fontSize:'22px',color:'#2C1810'}}>📊 Admin Stats</div>
+          <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'3px'}}>Last updated: {new Date().toLocaleString()}</div>
+        </div>
+        <button onClick={fetchStats} style={{padding:'7px 14px',borderRadius:'18px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>
+          🔄 Refresh
+        </button>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:'.75rem',marginBottom:'1.5rem'}}>
+        {[
+          {label:'Total Users',value:stats.totalUsers,icon:'👥',color:'#C2185B'},
+          {label:'Total Prospects',value:stats.totalProspects,icon:'💍',color:'#1565C0'},
+          {label:'Bride-to-be',value:stats.sheUsers,icon:'💗',color:'#C2185B'},
+          {label:'Groom-to-be',value:stats.heUsers,icon:'💙',color:'#1565C0'},
+          {label:'Mode not set',value:stats.noMode,icon:'❓',color:'#F57F17'},
+          {label:'Avg prospects/user',value:stats.avgProspects,icon:'📈',color:'#2E7D32'},
+        ].map((s,i)=>(
+          <div key={i} style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'14px',padding:'1rem',textAlign:'center'}}>
+            <div style={{fontSize:'24px',marginBottom:'6px'}}>{s.icon}</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',fontWeight:'600',color:s.color,lineHeight:1}}>{s.value}</div>
+            <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'5px'}}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'14px',overflow:'hidden'}}>
+        <div style={{padding:'.75rem 1rem',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#FFF0F5'}}>
+          <div style={{fontFamily:'Playfair Display,serif',fontSize:'16px',color:'#2C1810'}}>👤 All Users</div>
+          <div style={{fontSize:'10px',color:'#7B5E6B',marginTop:'2px'}}>Sorted by most active</div>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
+            <thead>
+              <tr style={{background:'#FFF8F0'}}>
+                {['Email','Mode','Prospects','Joined'].map(h=>(
+                  <th key={h} style={{textAlign:h==='Email'?'left':'center',padding:'9px 1rem',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',borderBottom:'1px solid rgba(194,24,91,0.1)'}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u,i)=>(
+                <tr key={u.id} style={{borderBottom:'1px solid rgba(194,24,91,0.08)',background:i%2===0?'#fff':'#FFFAF8'}}>
+                  <td style={{padding:'9px 1rem',color:'#2C1810'}}>{u.email||'—'}</td>
+                  <td style={{textAlign:'center',padding:'9px 1rem'}}>
+                    <span style={{fontSize:'12px',padding:'2px 9px',borderRadius:'10px',background:u.mode==='she'?'#FCE4EC':u.mode==='he'?'#E3F2FD':'#F5F5F5',color:u.mode==='she'?'#C2185B':u.mode==='he'?'#1565C0':'#9E9E9E'}}>
+                      {u.mode==='she'?'💗 Bride-to-be':u.mode==='he'?'💙 Groom-to-be':'Not set'}
+                    </span>
+                  </td>
+                  <td style={{textAlign:'center',padding:'9px 1rem',fontWeight:'600',color:u.prospectCount>0?'#C2185B':'#B39DAE'}}>{u.prospectCount}</td>
+                  <td style={{textAlign:'center',padding:'9px 1rem',color:'#7B5E6B',fontSize:'11px'}}>{u.created_at?new Date(u.created_at).toLocaleDateString('en-IN'):'—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
