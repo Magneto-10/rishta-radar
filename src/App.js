@@ -52,7 +52,7 @@ export default function App() {
     </div>
   )
 
-  if (window.location.pathname === '/admin') return <Admin session={session} />
+  if (window.location.pathname === '/admin' || window.location.hash === '#/admin' || window.location.href.includes('/admin')) return <Admin session={session} />
   if (!session) return <><Landing /><Analytics /></>
   if (!mode) return <><Onboarding session={session} onComplete={handleOnboardingComplete} /><Analytics /></>
   return <><Dashboard session={session} mode={mode} /><Analytics /></>
