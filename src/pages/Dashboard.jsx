@@ -1227,21 +1227,29 @@ function AdminStats({ supabase }) {
 
   async function fetchStats() {
     setLoading(true)
-    const { data: profiles } = await supabase.from('profiles').select('*')
-    const { data: prospects } = await supabase.from('prospects').select('*')
-    const userMap = {}
-    profiles?.forEach(p => { userMap[p.id] = { ...p, prospectCount: 0 } })
-    prospects?.forEach(p => { if (userMap[p.user_id]) userMap[p.user_id].prospectCount++ })
-    const userList = Object.values(userMap).sort((a,b) => b.prospectCount - a.prospectCount)
-    setStats({
-      totalUsers: profiles?.length || 0,
-      totalProspects: prospects?.length || 0,
-      sheUsers: profiles?.filter(p => p.mode === 'she').length || 0,
-      heUsers: profiles?.filter(p => p.mode === 'he').length || 0,
-      noMode: profiles?.filter(p => !p.mode).length || 0,
-      avgProspects: prospects?.length && profiles?.length ? (prospects.length / profiles.length).toFixed(1) : 0,
-    })
-    setUsers(userList)
+    try {
+      const { data: profiles } = await supabase.rpc('get_all_profiles')
+      const { data: prospectCounts } = await supabase.rpc('get_prospect_counts')
+
+      const userMap = {}
+      profiles?.forEach(p => { userMap[p.id] = { ...p, prospectCount: 0 } })
+      prospectCounts?.forEach(p => { if (userMap[p.user_id]) userMap[p.user_id].prospectCount = parseInt(p.count) })
+
+      const userList = Object.values(userMap).sort((a,b) => b.prospectCount - a.prospectCount)
+      const totalProspects = prospectCounts?.reduce((sum, p) => sum + parseInt(p.count), 0) || 0
+
+      setStats({
+        totalUsers: profiles?.length || 0,
+        totalProspects,
+        sheUsers: profiles?.filter(p => p.mode === 'she').length || 0,
+        heUsers: profiles?.filter(p => p.mode === 'he').length || 0,
+        noMode: profiles?.filter(p => !p.mode).length || 0,
+        avgProspects: totalProspects && profiles?.length ? (totalProspects / profiles.length).toFixed(1) : 0,
+      })
+      setUsers(userList)
+    } catch(e) {
+      console.error('Admin fetch error:', e)
+    }
     setLoading(false)
   }
 
