@@ -369,7 +369,7 @@ export default function Dashboard({ session, mode }) {
   ]
 
   return (
-    <div style={{display:'flex',minHeight:'100vh',fontFamily:'DM Sans,sans-serif',background:'#FFFAF8'}}>
+    <div style={{display:'flex',minHeight:'100vh',fontFamily:'DM Sans,sans-serif',background:mode==='he'?'#F0F4FF':'#FFFAF8'}}>
       <style>{heartCSS + mobileCSS}</style>
 
       {/* MOBILE HEADER */}
