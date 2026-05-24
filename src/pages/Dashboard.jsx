@@ -238,7 +238,10 @@ export default function Dashboard({ session, mode }) {
     }
   }
   function deleteQ(si, qi) {
-    if (sections[si].questions.length <= 2) { alert('Each section needs at least 2 questions.'); return }
+    if (sections[si].questions.length <= 2) {
+      alert('Minimum 2 questions per section are required!')
+      return
+    }
     if (!window.confirm('Delete this question?')) return
     updateSections(sections.map((s,i) => i===si ? {...s, questions: s.questions.filter((_,j)=>j!==qi)} : s))
   }
@@ -891,7 +894,15 @@ function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst,
                       <span style={{fontSize:'13px',color:'#7B5E6B'}}>
                         {q.label}
                         {onEditQ && <span className="q-edit-btn" onClick={()=>onEditQ(si,qi)}>✏️</span>}
-                        {onDeleteQ && sec.questions.length>2 && <span className="q-edit-btn" onClick={()=>onDeleteQ(si,qi)} style={{color:'#C62828'}}>×</span>}
+                        {onDeleteQ && (
+                          <span
+                            className="q-edit-btn"
+                            onClick={()=>sec.questions.length>2 ? onDeleteQ(si,qi) : null}
+                            title={sec.questions.length<=2 ? 'Minimum 2 questions required' : 'Delete question'}
+                            style={{color:sec.questions.length<=2?'#B39DAE':'#C62828',cursor:sec.questions.length<=2?'not-allowed':'pointer'}}>
+                            ×
+                          </span>
+                        )}
                       </span>
                       <span style={{fontSize:'13px',fontWeight:'600',color:val===0?'#B39DAE':'#C2185B',fontStyle:val===0?'italic':'normal',minWidth:'60px',textAlign:'right'}}>
                         {val===0?'Not rated':val}
