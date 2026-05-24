@@ -443,9 +443,13 @@ export default function Dashboard({ session, mode }) {
                 try {
                   await supabase.from('prospects').delete().eq('user_id', session.user.id)
                   await supabase.from('profiles').delete().eq('id', session.user.id)
-                  localStorage.removeItem(`rishta_mode_${session.user.id}`)
-                  localStorage.removeItem(`rishta_sections_v4_${session.user.id}`)
-                  localStorage.removeItem(`rishta_sections_he_v1_${session.user.id}`)
+                  const userId = session.user.id
+                  localStorage.removeItem(`rishta_mode_${userId}`)
+                  localStorage.removeItem(`rishta_sections_v4_${userId}`)
+                  localStorage.removeItem(`rishta_sections_he_v1_${userId}`)
+                  localStorage.removeItem('rishta_sections_v4')
+                  localStorage.removeItem('rishta_sections_he_v1')
+                  localStorage.removeItem('rishta_v4')
                   await supabase.auth.signOut()
                 } catch(e) {
                   alert('Something went wrong. Please try again.')
