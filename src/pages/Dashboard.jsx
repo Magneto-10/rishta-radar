@@ -1270,9 +1270,9 @@ function AdminStats({ supabase }) {
           <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'3px'}}>Last updated: {new Date().toLocaleString()}</div>
         </div>
         <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
-          <button onClick={fetchStats} style={{padding:'7px 14px',borderRadius:'18px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔄 Refresh</button>
-          <button onClick={()=>window.open('https://vercel.com/pranay-s-rishtaradar/rishta-radar/analytics','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#7C3AED',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>📊 Vercel Analytics</button>
-          <button onClick={()=>window.open('https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Frishtaradar.in%2F','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#4285F4',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔍 Search Console</button>
+          <button onClick={fetchStats} style={{padding:'7px 14px',borderRadius:'18px',background:'#FCE4EC',color:'#C2185B',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔄 Refresh</button>
+          <button onClick={()=>window.open('https://vercel.com/pranay-s-rishtaradar/rishta-radar/analytics','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#EDE7F6',color:'#6A1B9A',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>📊 Vercel Analytics</button>
+          <button onClick={()=>window.open('https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Frishtaradar.in%2F','_blank')} style={{padding:'7px 14px',borderRadius:'18px',background:'#E3F2FD',color:'#1565C0',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>🔍 Search Console</button>
         </div>
       </div>
 
