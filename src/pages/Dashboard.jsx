@@ -107,8 +107,9 @@ function loadSections() {
   } catch(e) {}
   return JSON.parse(JSON.stringify(DEFAULT_SECTIONS))
 }
-function saveSections(secs) {
-  try { localStorage.setItem('rishta_sections_v4', JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
+function saveSections(secs, mode) {
+  const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
+  try { localStorage.setItem(key, JSON.stringify(secs.map(s=>({key:s.key,questions:s.questions})))) } catch(e) {}
 }
 
 function spill(st) {
@@ -206,13 +207,13 @@ export default function Dashboard({ session, mode }) {
 
   function showToast(message, color='#2C1810') {
     const existing = document.getElementById('rr-toast')
-    if (existing) document.body.removeChild(existing)
+    if (existing) existing.remove()
     const toast = document.createElement('div')
     toast.id = 'rr-toast'
     toast.textContent = message
-    toast.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;`
+    toast.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-family:DM Sans,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);white-space:nowrap;`
     document.body.appendChild(toast)
-    setTimeout(() => { if(document.getElementById('rr-toast')) document.body.removeChild(toast) }, 3000)
+    setTimeout(() => { const el=document.getElementById('rr-toast'); if(el) el.remove() }, 3000)
   }
 
   const fetchProspects = useCallback(async () => {
@@ -223,10 +224,20 @@ export default function Dashboard({ session, mode }) {
   }, []) // eslint-disable-line
 
   useEffect(() => {
-    const secs = mode === 'he' ?
-      JSON.parse(JSON.stringify(BRIDE_SECTIONS)) :
-      loadSections()
-    setSections(secs)
+    const key = mode === 'he' ? 'rishta_sections_he_v1' : 'rishta_sections_v4'
+    try {
+      const saved = localStorage.getItem(key)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        const base = mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS
+        const merged = base.map((sec,i) => parsed[i] ? {...sec, questions: parsed[i].questions} : sec)
+        setSections(merged)
+      } else {
+        setSections(JSON.parse(JSON.stringify(mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS)))
+      }
+    } catch(e) {
+      setSections(JSON.parse(JSON.stringify(mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS)))
+    }
   }, [mode])
   useEffect(() => { fetchProspects() }, []) // eslint-disable-line
 
@@ -240,7 +251,7 @@ export default function Dashboard({ session, mode }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  function updateSections(newSecs) { setSections(newSecs); saveSections(newSecs) }
+  function updateSections(newSecs) { setSections(newSecs); saveSections(newSecs, mode) }
 
   function editQLabel(si, qi) {
     const newLabel = window.prompt('Edit question text:', sections[si].questions[qi].label)
