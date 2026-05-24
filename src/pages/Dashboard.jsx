@@ -1228,8 +1228,8 @@ function AdminStats({ supabase }) {
   async function fetchStats() {
     setLoading(true)
     try {
-      const { data: profiles, error: profilesError } = await supabase.rpc('get_all_profiles')
-      const { data: prospectCounts, error: countsError } = await supabase.rpc('get_prospect_counts')
+      const { data: profiles } = await supabase.rpc('get_all_profiles')
+      const { data: prospectCounts } = await supabase.rpc('get_prospect_counts')
 
 
       const userMap = {}

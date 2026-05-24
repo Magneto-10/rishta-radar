@@ -32,7 +32,7 @@ export default function App() {
       setLoading(false)
     }
 
-    const { error: upsertError } = await supabase.from('profiles').upsert({
+    await supabase.from('profiles').upsert({
       id: session.user.id,
       email: session.user.email,
     }, { onConflict: 'id' })
