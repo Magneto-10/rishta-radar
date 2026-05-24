@@ -1494,7 +1494,7 @@ function FeedbackForm({ session, mode }) {
         <div style={{marginBottom:'1.25rem'}}>
           <label style={{fontSize:'12px',fontWeight:'500',color:'#7B5E6B',display:'block',marginBottom:'8px'}}>Type of feedback</label>
           <select value={type} onChange={e=>setType(e.target.value)}
-            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
             <option value=''>Select type...</option>
             <option value='Bug Report'>🐛 Bug Report — Something is broken</option>
             <option value='Feature Request'>✨ Feature Request — I want something new</option>
@@ -1507,13 +1507,13 @@ function FeedbackForm({ session, mode }) {
           <label style={{fontSize:'12px',fontWeight:'500',color:'#7B5E6B',display:'block',marginBottom:'8px'}}>Your message</label>
           <textarea value={message} onChange={e=>setMessage(e.target.value)}
             placeholder="Tell us more — what happened, what you'd like to see, or just say hi!"
-            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:'#FFF0F5',minHeight:'120px',resize:'vertical',lineHeight:1.6,boxSizing:'border-box'}} />
+            style={{width:'100%',padding:'10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'13px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',minHeight:'120px',resize:'vertical',lineHeight:1.6,boxSizing:'border-box'}} />
         </div>
 
         {error && <div style={{fontSize:'12px',color:'#C62828',marginBottom:'1rem'}}>{error}</div>}
 
         <button onClick={handleSubmit} disabled={submitting}
-          style={{padding:'10px 28px',borderRadius:'20px',background:submitting?'#f5e6ec':'#C2185B',color:submitting?'#B39DAE':'#fff',border:'none',cursor:submitting?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
+          style={{padding:'10px 28px',borderRadius:'20px',background:submitting?'#f5e6ec':mode==='he'?'#1565C0':'#C2185B',color:submitting?'#B39DAE':'#fff',border:'none',cursor:submitting?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px',fontWeight:'500'}}>
           {submitting ? 'Sending...' : 'Send Feedback →'}
         </button>
 
