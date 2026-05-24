@@ -243,6 +243,10 @@ export default function Dashboard({ session, mode }) {
     updateSections(sections.map((s,i) => i===si ? {...s, questions: s.questions.filter((_,j)=>j!==qi)} : s))
   }
   function addQ(si) {
+    if (sections[si].questions.length >= 8) {
+      alert('Maximum 8 questions per section reached!')
+      return
+    }
     const label = window.prompt('Enter your new question:')
     if (!label || !label.trim()) return
     const hint = window.prompt('Add a short hint (optional):') || ''
@@ -899,7 +903,13 @@ function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst,
                 )
               })}
             </div>
-            {onAddQ && <button onClick={()=>onAddQ(si)} style={{marginTop:'12px',fontSize:'11px',padding:'5px 12px',borderRadius:'10px',border:`1px dashed ${sec.color}`,background:'transparent',color:sec.color,cursor:'pointer',width:'100%',fontFamily:'DM Sans,sans-serif'}}>+ Add question to this section</button>}
+            {onAddQ && (
+              <button onClick={()=>onAddQ(si)}
+                disabled={sec.questions.length >= 8}
+                style={{marginTop:'12px',fontSize:'11px',padding:'5px 12px',borderRadius:'10px',border:`1px dashed ${sec.questions.length>=8?'#B39DAE':sec.color}`,background:'transparent',color:sec.questions.length>=8?'#B39DAE':sec.color,cursor:sec.questions.length>=8?'not-allowed':'pointer',width:'100%',fontFamily:'DM Sans,sans-serif'}}>
+                {sec.questions.length >= 8 ? '✓ Maximum 8 questions reached' : '+ Add question to this section'}
+              </button>
+            )}
           </div>
         )}
       </div>
