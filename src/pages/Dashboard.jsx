@@ -95,6 +95,7 @@ const KCOLS = [
 
 const SWATCHES = ['#FCE4EC','#F8BBD0','#FFF0F5','#FFF8E1','#FFF3E0','#FAEEDA','#E8F5E9','#E0F2F1','#E3F2FD','#EDE7F6','#F3E5F5','#FBE9E7','#EFEBE9','#FFFDE7','#E8EAF6','#E0F7FA']
 const EMOJIS = ['👨‍💻','👨‍⚕️','👨‍🍳','👨‍🎨','👨‍🏫','👨‍💼','👨‍🔬','👨‍✈️','👨‍⚖️','🧔','👱','🙋','🤵','👮','👷','🌟','✨','🎯','🚀','🏆','💡','🦁','🐯','🦊','🦅','🦋','💎','👑','🎸','⚽','🏋️','🎮','📚','🎭','🌈','🍕','☕','🎻']
+const HE_EMOJIS = ['👩','👩‍💼','👩‍⚕️','👩‍🍳','👩‍🎨','👩‍🏫','👩‍🔬','👩‍✈️','👩‍⚖️','👱‍♀️','💁‍♀️','🙋‍♀️','👰','💃','🧕','👸','🧑‍💻','🌟','✨','🎯','🦋','🌸','🌺','🌻','💎','👑','🎭','🎨','🎵','☕','🍕','🌈','🦊','🐱','🦁','🐯','🌙','⭐','🎪']
 
 function loadSections() {
   try {
@@ -531,7 +532,7 @@ export default function Dashboard({ session, mode }) {
                         return (
                           <div key={sec.key} style={{display:'flex',alignItems:'center',gap:'6px',marginBottom:'3px'}}>
                             <span style={{fontSize:'10px',width:'14px'}}>{sec.icon}</span>
-                            <div style={{flex:1,height:'4px',background:'#f5e6ec',borderRadius:'2px'}}>
+                            <div style={{flex:1,height:'4px',background:mode==='he'?'#BBDEFB':'#f5e6ec',borderRadius:'2px'}}>
                               <div style={{width:ss+'%',height:'4px',background:sec.color,borderRadius:'2px'}} />
                             </div>
                             <span style={{fontSize:'10px',color:'#7B5E6B',width:'22px',textAlign:'right'}}>{ss}</span>
@@ -614,14 +615,14 @@ export default function Dashboard({ session, mode }) {
               <div style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B',marginBottom:'6px'}}>Avatar — tap to change</div>
               <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
                 <div onClick={()=>setEmojiTrayOpen(!emojiTrayOpen)}
-                  style={{fontSize:'32px',width:'56px',height:'56px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',border:'2px solid rgba(194,24,91,0.2)',background:'#FFF0F5'}}>
+                  style={{fontSize:'32px',width:'56px',height:'56px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',border:'2px solid rgba(194,24,91,0.2)',background:mode==='he'?'#EFF6FF':'#FFF0F5'}}>
                   {form.emoji||'👤'}
                 </div>
                 <div style={{fontSize:'11px',color:'#7B5E6B'}}>Tap the circle to pick</div>
               </div>
               {emojiTrayOpen && (
-                <div style={{display:'flex',flexWrap:'wrap',gap:'5px',marginTop:'8px',padding:'10px',background:'#FFF0F5',borderRadius:'10px',border:'1px solid rgba(194,24,91,0.13)',maxHeight:'150px',overflowY:'auto'}}>
-                  {EMOJIS.map(e=>(
+                <div style={{display:'flex',flexWrap:'wrap',gap:'5px',marginTop:'8px',padding:'10px',background:mode==='he'?'#EFF6FF':'#FFF0F5',borderRadius:'10px',border:'1px solid rgba(194,24,91,0.13)',maxHeight:'150px',overflowY:'auto'}}>
+                  {(mode==='he' ? HE_EMOJIS : EMOJIS).map(e=>(
                     <span key={e} onClick={()=>{setForm(f=>({...f,emoji:e}));setEmojiTrayOpen(false)}}
                       style={{fontSize:'22px',cursor:'pointer',padding:'3px',borderRadius:'7px',background:form.emoji===e?'#FCE4EC':'transparent'}}>{e}</span>
                   ))}
@@ -633,25 +634,25 @@ export default function Dashboard({ session, mode }) {
                 <div key={f.id} style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                   <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label}</label>
                   <input value={form[f.id]||''} onChange={fi(f.id)} placeholder={f.placeholder} type={f.type||'text'}
-                    style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5'}} />
+                    style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5'}} />
                 </div>
               ))}
               <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>Height</label>
-                <select value={form.height||''} onChange={fi('height')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+                <select value={form.height||''} onChange={fi('height')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
                   <option value="">Not specified</option>
                   {["4'11\" (150 cm)","5'0\" (152 cm)","5'1\" (155 cm)","5'2\" (157 cm)","5'3\" (160 cm)","5'4\" (163 cm)","5'5\" (165 cm)","5'6\" (168 cm)","5'7\" (170 cm)","5'8\" (173 cm)","5'9\" (175 cm)","5'10\" (178 cm)","5'11\" (180 cm)","6'0\" (183 cm)","6'1\" (185 cm)","6'2\" (188 cm)","6'3\" (191 cm)","6'4\" (193 cm)","6'5\" (196 cm)"].map(h=><option key={h}>{h}</option>)}
                 </select>
               </div>
               <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>Zodiac</label>
-                <select value={form.zodiac||'Aries'} onChange={fi('zodiac')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+                <select value={form.zodiac||'Aries'} onChange={fi('zodiac')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
                   {['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'].map(z=><option key={z}>{z}</option>)}
                 </select>
               </div>
               <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>Status</label>
-                <select value={form.status||'shortlisted'} onChange={fi('status')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+                <select value={form.status||'shortlisted'} onChange={fi('status')} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
                   <option value="shortlisted">Shortlisted</option><option value="meeting_pending">Meeting pending</option><option value="meeting_done">Met once</option><option value="discussion">Discussion going on</option><option value="favourite">⭐ Favourite</option><option value="eliminated">Eliminated</option>
                 </select>
               </div>
@@ -661,7 +662,7 @@ export default function Dashboard({ session, mode }) {
               {familyFields.map(f=>(
                 <div key={f.id} style={{display:'flex',flexDirection:'column',gap:'4px'}}>
                   <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label}</label>
-                  <select value={form[f.id]||''} onChange={fi(f.id)} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5',cursor:'pointer'}}>
+                  <select value={form[f.id]||''} onChange={fi(f.id)} style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5',cursor:'pointer'}}>
                     {f.opts.map(o=><option key={o} value={o}>{o||'Not known'}</option>)}
                   </select>
                 </div>
@@ -680,7 +681,7 @@ export default function Dashboard({ session, mode }) {
               <div key={f.id} style={{marginTop:'10px',display:'flex',flexDirection:'column',gap:'4px'}}>
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label} (comma-separated)</label>
                 <input value={form[f.id]||''} onChange={fi(f.id)} placeholder={f.placeholder}
-                  style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5'}} />
+                  style={{padding:'7px 10px',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:mode==='he'?'#EFF6FF':'#FFF0F5'}} />
               </div>
             ))}
             <div style={{marginTop:'1.25rem',display:'flex',gap:'8px'}}>
@@ -726,7 +727,7 @@ function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, is
             const ps=gsc(pr,sections),pst=gsty(ps),unr=isUnrated(pr,sections),active=pr.id===selId
             return (
               <div key={pr.id} onClick={()=>setSelId(pr.id)}
-                style={{display:'flex',alignItems:'center',gap:'7px',padding:'6px 12px',borderRadius:'20px',cursor:'pointer',border:`2px solid ${active?'#C2185B':'rgba(194,24,91,0.13)'}`,background:active?pr.color:'#fff',transition:'all .15s'}}>
+                style={{display:'flex',alignItems:'center',gap:'7px',padding:'6px 12px',borderRadius:'20px',cursor:'pointer',border:`2px solid ${active?(mode==='he'?'#1565C0':'#C2185B'):'rgba(194,24,91,0.13)'}`,background:active?pr.color:'#fff',transition:'all .15s'}}>
                 <span style={{fontSize:'16px'}}>{pr.emoji}</span>
                 <span style={{fontSize:'12px',fontWeight:active?'600':'400',color:'#2C1810'}}>{pr.name}</span>
                 <span style={{fontSize:'10px',padding:'1px 6px',borderRadius:'8px',background:unr?'#F5F5F5':pst.bg,color:unr?'#B39DAE':pst.col}}>{unr?'—':ps}</span>
@@ -778,7 +779,7 @@ function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, is
                     <span style={{fontSize:'12px',color:'#7B5E6B'}}>{sec.icon} {sec.label}</span>
                     <span style={{fontSize:'12px',fontWeight:'600',color:sec.color}}>{ss}</span>
                   </div>
-                  <div style={{height:'7px',background:'#f5e6ec',borderRadius:'4px',overflow:'hidden'}}>
+                  <div style={{height:'7px',background:mode==='he'?'#BBDEFB':'#f5e6ec',borderRadius:'4px',overflow:'hidden'}}>
                     <div style={{width:ss+'%',height:'7px',background:sec.color,borderRadius:'4px',transition:'width .5s'}} />
                   </div>
                 </div>
@@ -793,7 +794,7 @@ function ProfileView({ prospects, sections, selId, setSelId, onGoToProspects, is
             {(p.vibes||[]).length>0 && <div style={{marginBottom:'8px'}}><div style={{fontSize:'10px',color:'#B39DAE',marginBottom:'5px'}}>VIBES</div><div style={{display:'flex',flexWrap:'wrap',gap:'5px'}}>{p.vibes.map(v=><span key={v} style={{fontSize:'11px',padding:'3px 9px',borderRadius:'9px',background:'#FCE4EC',color:'#C2185B'}}>{v}</span>)}</div></div>}
             {(p.flags||[]).length>0 && <div style={{marginBottom:'8px'}}><div style={{fontSize:'10px',color:'#B39DAE',marginBottom:'5px'}}>YELLOW FLAGS</div><div style={{display:'flex',flexWrap:'wrap',gap:'5px'}}>{p.flags.map(f=><span key={f} style={{fontSize:'11px',padding:'3px 9px',borderRadius:'9px',background:'#FFF8E1',color:'#F57F17'}}>⚠ {f}</span>)}</div></div>}
             {!(p.greens||[]).length && !(p.vibes||[]).length && !(p.flags||[]).length && <div style={{fontSize:'11px',color:'#B39DAE',fontStyle:'italic'}}>No tags added yet</div>}
-            {p.notes && <div style={{marginTop:'10px',padding:'.75rem',background:'#FFF0F5',borderRadius:'10px'}}><div style={{fontSize:'10px',color:'#B39DAE',marginBottom:'4px',textTransform:'uppercase',letterSpacing:'.5px'}}>My Notes</div><div style={{fontSize:'12px',color:'#2C1810',lineHeight:1.6}}>{p.notes}</div></div>}
+            {p.notes && <div style={{marginTop:'10px',padding:'.75rem',background:mode==='he'?'#EFF6FF':'#FFF0F5',borderRadius:'10px'}}><div style={{fontSize:'10px',color:'#B39DAE',marginBottom:'4px',textTransform:'uppercase',letterSpacing:'.5px'}}>My Notes</div><div style={{fontSize:'12px',color:'#2C1810',lineHeight:1.6}}>{p.notes}</div></div>}
           </div>
 
           {/* Family */}
@@ -990,25 +991,25 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
       </div>
       {active.length>=2&&(<>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden',marginBottom:'12px'}}>
-          <div onClick={()=>setCmpQualOpen(!cmpQualOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#E3F2FD':'#FFF0F5',borderBottom:cmpQualOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
+          <div onClick={()=>setCmpQualOpen(!cmpQualOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#EFF6FF':'#FFF0F5',borderBottom:cmpQualOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
             <span style={{fontSize:'16px'}}>📋</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:'#2C1810'}}>Background & Family Info</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Job, income, family type, city plans</div></div>
             <span style={{fontSize:'13px',color:'#B39DAE',display:'inline-block',transform:cmpQualOpen?'rotate(0)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
           </div>
           {cmpQualOpen&&(<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
-            <thead><tr style={{background:'#FFF0F5'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
+            <thead><tr style={{background:mode==='he'?'#EFF6FF':'#FFF0F5'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
             <tbody>{[{l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},{l:'Education',fn:p=>p.edu||'—'},{l:'City',fn:p=>p.city||'—'},{l:'Height',fn:p=>p.height||'—'},{l:'Annual income',fn:p=>p.income||'Not disclosed'},{l:'Family type',fn:p=>p.famtype||'—'},{l:'Family members',fn:p=>p.famsize||'—'},{l:'Parents',fn:p=>p.parents||'—'},...(mode==='he'?[{l:'Career plans after marriage',fn:p=>p.careerplan||'—'},{l:'Willing to relocate?',fn:p=>p.relocate||'—'},{l:'Living arrangement',fn:p=>p.livingarr||'—'}]:[{l:'Living situation',fn:p=>p.living||'—'},{l:'Post-marriage plan',fn:p=>p.cityplan||'—'}])].map(f=>(<tr key={f.l}><td style={{padding:'8px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#7B5E6B',fontWeight:'500'}}>{f.l}</td>{active.map(p=><td key={p.id} style={{textAlign:'center',padding:'8px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#2C1810'}}>{f.fn(p)}</td>)}</tr>))}</tbody>
           </table></div>)}
         </div>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
           <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#BBDEFB':'#FCE4EC',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
-            <span style={{fontSize:'16px'}}>📊</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:'#880E4F'}}>Scores & Ratings</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Section scores and individual question ratings</div></div>
+            <span style={{fontSize:'16px'}}>📊</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:mode==='he'?'#1565C0':'#880E4F'}}>Scores & Ratings</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Section scores and individual question ratings</div></div>
             <span style={{fontSize:'13px',color:'#B39DAE',display:'inline-block',transform:cmpQuantOpen?'rotate(0)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
           </div>
           {cmpQuantOpen&&(<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
-            <thead><tr style={{background:'#FCE4EC'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'30%'}}>Section / Question</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
+            <thead><tr style={{background:mode==='he'?'#BBDEFB':'#FCE4EC'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'30%'}}>Section / Question</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
             <tbody>
               {sections.flatMap(sec=>{const secVals=active.map(p=>secScore(p,sec)),secMax=Math.max(...secVals);return[<tr key={sec.key} style={{background:'#fdf5f8'}}><td style={{padding:'9px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontSize:'12px',fontWeight:'600',color:'#2C1810'}}>{sec.icon} {sec.label}</td>{active.map((p,i)=><td key={p.id} style={{textAlign:'center',padding:'9px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontWeight:'600',fontSize:'13px',color:secVals[i]===secMax?sec.color:'#7B5E6B',background:secVals[i]===secMax?sec.color+'11':''}}>{secVals[i]}{secVals[i]===secMax?' ▲':''}</td>)}</tr>,...sec.questions.map(q=>{const vals=active.map(p=>(p.params||{})[q.k]||0),mx=Math.max(...vals);return(<tr key={q.k}><td style={{padding:'6px 10px 6px 22px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontSize:'11px',color:'#7B5E6B',fontStyle:'italic'}}>{q.label}</td>{active.map((p,i)=><td key={p.id} style={{textAlign:'center',padding:'6px',borderBottom:'1px solid rgba(194,24,91,0.1)',fontSize:'12px',color:vals[i]===mx&&vals[i]>0?'#C2185B':'#7B5E6B',fontWeight:vals[i]===mx&&vals[i]>0?'500':'400'}}>{vals[i]===0?'—':vals[i]+(vals[i]===mx?' ▲':'')}</td>)}</tr>)})]})}
-              <tr style={{borderTop:'2px solid rgba(194,24,91,0.2)',background:'#FCE4EC'}}><td style={{fontSize:'12px',fontWeight:'700',padding:'10px',color:'#2C1810'}}>Overall Score</td>{active.map(p=>{const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections);return<td key={p.id} style={{textAlign:'center',padding:'10px 6px',fontSize:'18px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,background:unr?'#F5F5F5':st.bg}}>{unr?'—':s+'/100'}</td>})}</tr>
+              <tr style={{borderTop:'2px solid rgba(194,24,91,0.2)',background:mode==='he'?'#BBDEFB':'#FCE4EC'}}><td style={{fontSize:'12px',fontWeight:'700',padding:'10px',color:'#2C1810'}}>Overall Score</td>{active.map(p=>{const s=gsc(p,sections),st=gsty(s),unr=isUnrated(p,sections);return<td key={p.id} style={{textAlign:'center',padding:'10px 6px',fontSize:'18px',fontWeight:'700',fontFamily:'Playfair Display,serif',color:unr?'#B39DAE':st.col,background:unr?'#F5F5F5':st.bg}}>{unr?'—':s+'/100'}</td>})}</tr>
             </tbody>
           </table></div>)}
         </div>
