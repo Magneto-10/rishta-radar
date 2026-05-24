@@ -239,7 +239,7 @@ export default function Dashboard({ session, mode }) {
     } catch(e) {
       setSections(JSON.parse(JSON.stringify(mode === 'he' ? BRIDE_SECTIONS : DEFAULT_SECTIONS)))
     }
-  }, [mode])
+  }, [mode]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { fetchProspects() }, []) // eslint-disable-line
 
   useEffect(() => {
