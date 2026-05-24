@@ -1228,8 +1228,10 @@ function AdminStats({ supabase }) {
   async function fetchStats() {
     setLoading(true)
     try {
-      const { data: profiles } = await supabase.rpc('get_all_profiles')
-      const { data: prospectCounts } = await supabase.rpc('get_prospect_counts')
+      const { data: profiles, error: profilesError } = await supabase.rpc('get_all_profiles')
+      const { data: prospectCounts, error: countsError } = await supabase.rpc('get_prospect_counts')
+      console.log('Profiles:', profiles, 'Error:', profilesError)
+      console.log('Prospect counts:', prospectCounts, 'Error:', countsError)
 
       const userMap = {}
       profiles?.forEach(p => { userMap[p.id] = { ...p, prospectCount: 0 } })
