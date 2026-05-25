@@ -602,7 +602,7 @@ export default function Dashboard({ session, mode }) {
                 </button>
               ))}
             </div>
-            {ovTab==='kanban' && <KanbanBoard prospects={prospects} sections={sections} onMove={updateStatus} onSelect={selAndView} dragId={dragId} setDragId={setDragId} theme={theme} />}
+            {ovTab==='kanban' && <KanbanBoard prospects={prospects} sections={sections} onMove={updateStatus} onSelect={selAndView} dragId={dragId} setDragId={setDragId} theme={theme} supabase={supabase} setProspects={setProspects} />}
             {ovTab==='detail' && <ProfileView prospects={prospects} sections={sections} selId={selId} setSelId={setSelId} onGoToProspects={(id)=>{setPage('prospects');setSelId(id)}} isMobile={isMobile} theme={theme} mode={mode} />}
           </div>
         )}
@@ -1103,7 +1103,8 @@ function SectionSliders({ p, sections, prefix, onParamChange, twoCol, openFirst,
 }
 
 // ── KANBAN BOARD ──────────────────────────────────────────────────────────────
-function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId, theme={primary:'#C2185B',light:'#FFF0F5'} }) {
+function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId, theme={primary:'#C2185B',light:'#FFF0F5'}, supabase, setProspects }) {
+  const isCardMobile = window.innerWidth < 768
   return (
     <div style={{display:'flex',gap:'14px',overflowX:'auto',paddingBottom:'1rem',alignItems:'flex-start'}}>
       {KCOLS.map(col=>{
@@ -1137,6 +1138,21 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
                       </div>
                     </div>
                     {(p.vibes||[]).slice(0,3).map(v=><span key={v} style={{fontSize:'9px',padding:'2px 7px',borderRadius:'7px',background:col.bg,color:col.pill,display:'inline-block',margin:'1px'}}>{v}</span>)}
+                    {isCardMobile && (
+                      <select
+                        value={p.status || 'Shortlisted'}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value
+                          setProspects(prev => prev.map(x => x.id === p.id ? {...x, status: newStatus} : x))
+                          await supabase.from('prospects').update({status: newStatus}).eq('id', p.id)
+                        }}
+                        onClick={e => e.stopPropagation()}
+                        style={{marginTop:'6px',width:'100%',padding:'5px 8px',borderRadius:'8px',border:`1px solid ${theme.primary}33`,background:theme.light,color:theme.primary,fontFamily:'DM Sans,sans-serif',fontSize:'11px',cursor:'pointer'}}>
+                        {['Shortlisted','Meeting pending','Met once','In discussion','Favourite','Eliminated'].map(s=>(
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 )
               }) : <div style={{textAlign:'center',padding:'1.5rem .5rem',color:'#B39DAE',fontSize:'11px',fontStyle:'italic'}}>Drop a card here</div>}
