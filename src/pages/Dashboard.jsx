@@ -1167,8 +1167,8 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
           </table></div>)}
         </div>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
-          <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#BBDEFB':'#FCE4EC',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
-            <span style={{fontSize:'16px'}}>📊</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:mode==='he'?'#1565C0':'#880E4F'}}>Scores & Ratings</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Section scores and individual question ratings</div></div>
+          <div onClick={()=>setCmpQuantOpen(!cmpQuantOpen)} style={{display:'flex',alignItems:'center',gap:'10px',padding:'12px 14px',cursor:'pointer',background:mode==='he'?'#EFF6FF':'#FFF0F5',borderBottom:cmpQuantOpen?'1px solid rgba(194,24,91,0.13)':'none'}}>
+            <span style={{fontSize:'16px'}}>📊</span><div style={{flex:1}}><div style={{fontSize:'13px',fontWeight:'600',color:mode==='he'?'#1565C0':'#C2185B'}}>Scores & Ratings</div><div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'1px'}}>Section scores and individual question ratings</div></div>
             <span style={{fontSize:'13px',color:'#B39DAE',display:'inline-block',transform:cmpQuantOpen?'rotate(0)':'rotate(-90deg)',transition:'transform .2s'}}>▼</span>
           </div>
           {cmpQuantOpen&&(<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
