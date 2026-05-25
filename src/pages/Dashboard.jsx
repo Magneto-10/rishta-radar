@@ -1140,7 +1140,7 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
                     {(p.vibes||[]).slice(0,3).map(v=><span key={v} style={{fontSize:'9px',padding:'2px 7px',borderRadius:'7px',background:col.bg,color:col.pill,display:'inline-block',margin:'1px'}}>{v}</span>)}
                     {isCardMobile && (
                       <select
-                        value={p.status || 'Shortlisted'}
+                        value={p.status || 'shortlisted'}
                         onChange={async (e) => {
                           const newStatus = e.target.value
                           setProspects(prev => prev.map(x => x.id === p.id ? {...x, status: newStatus} : x))
@@ -1148,8 +1148,8 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
                         }}
                         onClick={e => e.stopPropagation()}
                         style={{marginTop:'6px',width:'100%',padding:'5px 8px',borderRadius:'8px',border:`1px solid ${theme.primary}33`,background:theme.light,color:theme.primary,fontFamily:'DM Sans,sans-serif',fontSize:'11px',cursor:'pointer'}}>
-                        {['Shortlisted','Meeting pending','Met once','In discussion','Favourite','Eliminated'].map(s=>(
-                          <option key={s} value={s}>{s}</option>
+                        {KCOLS.map(col=>(
+                          <option key={col.key} value={col.key}>{col.label}</option>
                         ))}
                       </select>
                     )}
