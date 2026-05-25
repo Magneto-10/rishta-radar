@@ -31,9 +31,9 @@ const DEFAULT_SECTIONS = [
     {k:'fut_goals', label:'Aligned on life goals — where to live, lifestyle', hint:'Do your big life plans match?'},
     {k:'fut_kids', label:'Same views on children and parenting', hint:'On the same page about family planning?'},
     {k:'fut_respect', label:'Treats you as an equal partner', hint:'Does he genuinely respect your opinions and career?'},
-    {k:'fut_milcompat', label:'Will likely get along well with your parents', hint:'Mammi and papa test 😄'},
+    {k:'fut_milcompat', label:'Will likely get along well with your parents', hint:'Mummy and papa test 😄'},
   ]},
-  { key:'fun', icon:'🎉', label:'Fun & MIL Compatibility', color:'#E65100', desc:'The fun stuff — vibes, humour, and the all-important mammi test', questions:[
+  { key:'fun', icon:'🎉', label:'Fun & MIL Compatibility', color:'#E65100', desc:'The fun stuff — vibes, humour, and the all-important mummy test', questions:[
     {k:'fun_milvibes', label:'His mom seems sweet and not too interfering', hint:'First impressions of MIL? Controlling or chill?'},
     {k:'fun_milstyle', label:"MIL's lifestyle is compatible with yours", hint:'Will you be able to get along with her day-to-day?'},
     {k:'fun_spontaneous', label:'He is spontaneous and knows how to surprise you', hint:'Flowers for no reason? Random plans? Or predictable?'},
@@ -995,7 +995,7 @@ function NotesBox({ p, onSave, theme={primary:'#C2185B',light:'#FFF0F5'} }) {
         value={text}
         onChange={handleChange}
         onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();handleSave()}}}
-        placeholder="Gut feeling, what mammi said, vibes from meeting..."
+        placeholder="Gut feeling, what mummy said, vibes from meeting..."
         style={{width:'100%',padding:'9px',border:`1px solid ${dirty?theme.primary:'rgba(194,24,91,0.13)'}`,borderRadius:'10px',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',resize:'vertical',background:theme.light,minHeight:'80px',lineHeight:1.6,outline:'none',transition:'border .15s',boxSizing:'border-box'}}
       />
       <div style={{marginTop:'6px'}}>
@@ -1281,7 +1281,7 @@ function FunZone({ prospects, sections, mode }) {
             </div>
           )})}
           <div style={{marginTop:'10px',display:'flex',gap:'8px',flexWrap:'wrap'}}>
-            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 {mode==='he'?'Sasural':'Mammi'}'s pick: {milChamp.name}</span>
+            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 {mode==='he'?'Sasural':'Mummy'}'s pick: {milChamp.name}</span>
             {milSorted.length>1&&<span style={{fontSize:'11px',background:'#FFEBEE',color:'#C62828',padding:'3px 10px',borderRadius:'8px'}}>😬 Toughest sell: {milWorst.name}</span>}
           </div>
           <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'8px'}}>Formula: (Fun & {mode==='he'?'Sasural':'MIL'} + Family & Values) ÷ 2</div>
