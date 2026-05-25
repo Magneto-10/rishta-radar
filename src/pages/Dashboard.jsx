@@ -297,6 +297,7 @@ export default function Dashboard({ session, mode }) {
       famtype:form.famtype||'', famsize:form.famsize||'', parents:form.parents||'',
       siblings:form.siblings||'', sibst:form.sibst||'', income:form.income||'',
       living:form.living||'', cityplan:form.cityplan||'',
+      careerplan:form.careerplan||'', relocate:form.relocate||'', livingarr:form.livingarr||'',
       params: editProspect ? editProspect.params : defaultParams(sections)
     }
     if (editProspect) {
@@ -336,7 +337,7 @@ export default function Dashboard({ session, mode }) {
   function openAdd() { setEditProspect(null); setForm({color:'#FCE4EC',emoji:'👤',status:'shortlisted',zodiac:'Aries'}); setShowModal(true); setEmojiTrayOpen(false) }
   function openEdit(p) {
     setEditProspect(p)
-    setForm({name:p.name,age:p.age,city:p.city,hometown:p.hometown,job:p.job,company:p.company,edu:p.edu,height:p.height,zodiac:p.zodiac,emoji:p.emoji,color:p.color,status:p.status,greens:(p.greens||[]).join(', '),flags:(p.flags||[]).join(', '),vibes:(p.vibes||[]).join(', '),notes:p.notes||'',famtype:p.famtype||'',famsize:p.famsize||'',parents:p.parents||'',siblings:p.siblings||'',sibst:p.sibst||'',income:p.income||'',living:p.living||'',cityplan:p.cityplan||''})
+    setForm({name:p.name,age:p.age,city:p.city,hometown:p.hometown,job:p.job,company:p.company,edu:p.edu,height:p.height,zodiac:p.zodiac,emoji:p.emoji,color:p.color,status:p.status,greens:(p.greens||[]).join(', '),flags:(p.flags||[]).join(', '),vibes:(p.vibes||[]).join(', '),notes:p.notes||'',famtype:p.famtype||'',famsize:p.famsize||'',parents:p.parents||'',siblings:p.siblings||'',sibst:p.sibst||'',income:p.income||'',living:p.living||'',cityplan:p.cityplan||'',careerplan:p.careerplan||'',relocate:p.relocate||'',livingarr:p.livingarr||''})
     setShowModal(true); setEmojiTrayOpen(false)
   }
   function selAndView(id) { setSelId(id); setOvTab('detail'); setPage('overview') }
@@ -1191,7 +1192,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
           </div>
           {cmpQualOpen&&(<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
             <thead><tr style={{background:mode==='he'?'#EFF6FF':'#FFF0F5'}}><th style={{textAlign:'left',padding:'9px 10px',fontSize:'10px',fontWeight:'500',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'1px solid rgba(194,24,91,0.13)',width:'20%'}}>Field</th>{active.map(p=><th key={p.id} style={{textAlign:'center',padding:'9px 10px',fontSize:'11px',borderBottom:'1px solid rgba(194,24,91,0.13)'}}>{p.emoji} {p.name}</th>)}</tr></thead>
-            <tbody>{[{l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},{l:'Education',fn:p=>p.edu||'—'},{l:'City',fn:p=>p.city||'—'},{l:'Height',fn:p=>p.height||'—'},{l:'Annual income',fn:p=>p.income||'Not disclosed'},{l:'Family type',fn:p=>p.famtype||'—'},{l:'Family members',fn:p=>p.famsize||'—'},{l:'Parents',fn:p=>p.parents||'—'},...(mode==='he'?[{l:'Career plans after marriage',fn:p=>p.careerplan||'—'},{l:'Willing to relocate?',fn:p=>p.relocate||'—'},{l:'Living arrangement',fn:p=>p.livingarr||'—'}]:[{l:'Living situation',fn:p=>p.living||'—'},{l:'Post-marriage plan',fn:p=>p.cityplan||'—'}])].map(f=>(<tr key={f.l}><td style={{padding:'8px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#7B5E6B',fontWeight:'500'}}>{f.l}</td>{active.map(p=><td key={p.id} style={{textAlign:'center',padding:'8px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#2C1810'}}>{f.fn(p)}</td>)}</tr>))}</tbody>
+            <tbody>{[{l:'Job',fn:p=>p.job||'—'},{l:'Company',fn:p=>p.company||'—'},{l:'Education',fn:p=>p.edu||'—'},{l:'City',fn:p=>p.city||'—'},{l:'Height',fn:p=>p.height||'—'},{l:'Annual income',fn:p=>p.income||'Not disclosed'},...(mode!=='he'?[{l:'Family type',fn:p=>p.famtype||'—'}]:[]),{l:'Family members',fn:p=>p.famsize||'—'},{l:'Parents',fn:p=>p.parents||'—'},...(mode==='he'?[{l:'Career plans after marriage',fn:p=>p.careerplan||'—'},{l:'Willing to relocate?',fn:p=>p.relocate||'—'},{l:'Living arrangement',fn:p=>p.livingarr||'—'}]:[{l:'Living situation',fn:p=>p.living||'—'},{l:'Post-marriage plan',fn:p=>p.cityplan||'—'}])].map(f=>(<tr key={f.l}><td style={{padding:'8px 10px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#7B5E6B',fontWeight:'500'}}>{f.l}</td>{active.map(p=><td key={p.id} style={{textAlign:'center',padding:'8px 6px',borderBottom:'1px solid rgba(194,24,91,0.1)',color:'#2C1810'}}>{f.fn(p)}</td>)}</tr>))}</tbody>
           </table></div>)}
         </div>
         <div style={{border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden'}}>
