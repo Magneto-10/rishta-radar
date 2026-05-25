@@ -762,7 +762,7 @@ export default function Dashboard({ session, mode }) {
       {showModal && (
         <div style={{position:'fixed',inset:0,background:'rgba(44,24,16,.4)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center'}}>
           <div style={{background:'#fff',borderRadius:'16px',padding:'1.75rem',width:'560px',maxWidth:'95vw',maxHeight:'90vh',overflowY:'auto',boxShadow:'0 20px 60px rgba(194,24,91,.15)'}}>
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:'19px',color:'#2C1810',marginBottom:'1.25rem'}}>{editProspect?'Edit Prospect ✏️':'Add New Prospect 💌'}</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'19px',color:'#2C1810',marginBottom:'1.25rem'}}>{editProspect?'Edit Prospect ✏️':mode==='he'?'Add a Bride Prospect 💐':'Add a Groom Prospect 💍'}</div>
             <div style={{marginBottom:'12px'}}>
               <div style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B',marginBottom:'6px'}}>Avatar — tap to change</div>
               <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
@@ -829,7 +829,7 @@ export default function Dashboard({ session, mode }) {
                 ))}
               </div>
             </div>
-            {[{id:'greens',label:'Green flags',placeholder:'Honest, Family-oriented'},{id:'flags',label:'Yellow flags',placeholder:'Workaholic, Travels rarely'},{id:'vibes',label:'Vibe tags',placeholder:'Gym bro, Dog dad'}].map(f=>(
+            {[{id:'greens',label:'Green flags',placeholder:'Honest, Family-oriented'},{id:'flags',label:'Yellow flags',placeholder:'Workaholic, Travels rarely'},{id:'vibes',label:'Vibe tags',placeholder:mode==='he'?'Cat mom, Fitness freak':'Gym bro, Dog dad'}].map(f=>(
               <div key={f.id} style={{marginTop:'10px',display:'flex',flexDirection:'column',gap:'4px'}}>
                 <label style={{fontSize:'11px',fontWeight:'500',color:'#7B5E6B'}}>{f.label} (comma-separated)</label>
                 <input value={form[f.id]||''} onChange={fi(f.id)} placeholder={f.placeholder}
