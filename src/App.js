@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
 import Onboarding from './pages/Onboarding'
 import { Analytics } from '@vercel/analytics/react'
 import Admin from './pages/Admin'
+
+function LoadingScreen() {
+  return (
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#FFF0F5',fontFamily:'DM Sans,sans-serif'}}>
+      <div style={{textAlign:'center'}}>
+        <div style={{fontSize:'32px',marginBottom:'1rem'}}>💍</div>
+        <div style={{color:'#C2185B',fontSize:'14px'}}>Loading Rishta Radar...</div>
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -54,17 +66,22 @@ export default function App() {
     setMode(selectedMode)
   }
 
-  if (loading) return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#FFF0F5',fontFamily:'DM Sans,sans-serif'}}>
-      <div style={{textAlign:'center'}}>
-        <div style={{fontSize:'32px',marginBottom:'1rem'}}>💍</div>
-        <div style={{color:'#C2185B',fontSize:'14px'}}>Loading Rishta Radar...</div>
-      </div>
-    </div>
+  return (
+    <BrowserRouter>
+      <Analytics />
+      <Routes>
+        <Route path="/admin" element={
+          loading ? <LoadingScreen /> :
+          !session ? <Navigate to="/" /> :
+          <Admin session={session} />
+        } />
+        <Route path="/*" element={
+          loading ? <LoadingScreen /> :
+          !session ? <Landing /> :
+          !mode ? <Onboarding session={session} onComplete={handleOnboardingComplete} /> :
+          <Dashboard session={session} mode={mode} />
+        } />
+      </Routes>
+    </BrowserRouter>
   )
-
-  if (window.location.pathname === '/admin' || window.location.hash === '#/admin' || window.location.href.includes('/admin')) return <Admin session={session} />
-  if (!session) return <><Landing /><Analytics /></>
-  if (!mode) return <><Onboarding session={session} onComplete={handleOnboardingComplete} /><Analytics /></>
-  return <><Dashboard session={session} mode={mode} /><Analytics /></>
 }
