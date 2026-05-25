@@ -1431,6 +1431,34 @@ function AdminStats({ supabase }) {
           </table>
         </div>
       </div>
+
+      <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',overflow:'hidden',marginTop:'1.5rem'}}>
+        <div style={{padding:'1rem 1.25rem',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#FFF0F5'}}>
+          <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#2C1810'}}>🔍 Free Tier Monitor</div>
+          <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>Check monthly to avoid hitting limits</div>
+        </div>
+        <div style={{padding:'1rem'}}>
+          {[
+            {name:'Supabase',icon:'🗄️',limit:'50,000 users · 500MB database · 2GB bandwidth',url:'https://supabase.com/dashboard/project/uxvvhnqzkygldjeuzjay/settings/billing',color:'#2E7D32'},
+            {name:'Vercel',icon:'▲',limit:'100GB bandwidth · Unlimited deployments',url:'https://vercel.com/pranay-s-rishtaradar/rishta-radar/settings/billing',color:'#000'},
+            {name:'Formspree',icon:'📬',limit:'50 feedback submissions/month',url:'https://formspree.io/forms',color:'#E65100'},
+            {name:'Vercel Analytics',icon:'📊',limit:'2,500 events/month',url:'https://vercel.com/pranay-s-rishtaradar/rishta-radar/analytics',color:'#6A1B9A'},
+            {name:'Google Search Console',icon:'🔍',limit:'Free — no limits',url:'https://search.google.com/search-console',color:'#1565C0'},
+          ].map((t,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:'12px',padding:'12px 0',borderBottom:i<4?'1px solid rgba(194,24,91,0.08)':'none'}}>
+              <div style={{fontSize:'20px',width:'32px',textAlign:'center',flexShrink:0}}>{t.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:'13px',fontWeight:'500',color:'#2C1810'}}>{t.name}</div>
+                <div style={{fontSize:'11px',color:'#7B5E6B',marginTop:'2px'}}>{t.limit}</div>
+              </div>
+              <button onClick={()=>window.open(t.url,'_blank')}
+                style={{padding:'5px 12px',borderRadius:'12px',background:'#FFF0F5',color:'#C2185B',border:'1px solid rgba(194,24,91,0.2)',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'11px',fontWeight:'500',flexShrink:0}}>
+                Check →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
