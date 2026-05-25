@@ -355,7 +355,7 @@ export default function Dashboard({ session, mode }) {
   const familyFields = [
     ...(mode !== 'he' ? [{id:'famtype',label:'Family type',opts:['','Joint family','Nuclear family','Lives alone','Joint now, plans to go nuclear','Stays with parents only']}] : []),
     {id:'famsize',label:'Family members',opts:['','Just her (1)','2–3 members','4–5 members','6–7 members','8+ members']},
-    {id:'parents',label:'Parents situation',opts:['','Both parents with her','Parents in hometown','Single parent','Parents retired independently','Parents abroad']},
+    {id:'parents',label:'Parents situation',opts:mode==='he'?['Not known','Both parents with her','Single parent','Parents retired independently','Parents abroad','No parents']:['Not known','Both parents with him','Single parent','Parents retired independently','Parents abroad','No parents']},
     {id:'siblings',label:'Siblings',opts:['','Only child','1 sibling','2 siblings','3+ siblings']},
     {id:'sibst',label:'Sibling status',opts:['','All married','Some married','All unmarried','No siblings']},
     {id:'income',label:'Annual income',opts:['Not disclosed','Below ₹5L','₹5L – ₹10L','₹10L – ₹20L','₹20L – ₹40L','₹40L – ₹75L','₹75L – ₹1Cr','₹1Cr+']},
