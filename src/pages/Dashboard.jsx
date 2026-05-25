@@ -1212,7 +1212,7 @@ function FunZone({ prospects, sections, mode }) {
   
   const sheModeCards=[
     {ic:'👑',t:'Top pick right now',p:top,sub:`Overall score: ${gsc(top,sections)}/100`,formula:'Highest overall score across all sections'},
-    {ic:'😅',t:"MIL's favourite",p:milChamp,sub:`MIL score: ${milScore(milChamp)}/100`,formula:'(Fun & MIL + Family & Values) ÷ 2'},
+    {ic:'💛',t:"Parents' favourite",p:milChamp,sub:`Family score: ${milScore(milChamp)}/100`,formula:'(Fun & Family + Family & Values) ÷ 2'},
     {ic:'💛',t:'Most emotionally mature',p:fns(prospects,secEQ),sub:`EQ score: ${secScore(fns(prospects,secEQ),secEQ)}/100`,formula:'Highest Emotional Quotient section score'},
     {ic:'🏠',t:'Best family values',p:fns(prospects,secFam),sub:`Family score: ${secScore(fns(prospects,secFam),secFam)}/100`,formula:'Highest Family & Values section score'},
     {ic:'💸',t:'Most financially sorted',p:fns(prospects,secFin),sub:`Finance score: ${secScore(fns(prospects,secFin),secFin)}/100`,formula:'Highest Financial & Career section score'},
@@ -1235,8 +1235,8 @@ function FunZone({ prospects, sections, mode }) {
   ]
   
   const funCards = mode==='he' ? heModeCards : sheModeCards
-  const milLabel = mode==='he' ? 'Sasural Compatibility' : 'MIL Compatibility'
-  const milIcon = mode==='he' ? '🏡' : '😅'
+  const milLabel = mode==='he' ? 'Sasural Compatibility' : 'Family Approval'
+  const milIcon = mode==='he' ? '🏡' : '👨‍👩‍👧'
   
   const zodiacs={Aries:'♈',Taurus:'♉',Gemini:'♊',Cancer:'♋',Leo:'♌',Virgo:'♍',Libra:'♎',Scorpio:'♏',Sagittarius:'♐',Capricorn:'♑',Aquarius:'♒',Pisces:'♓'}
 
@@ -1281,10 +1281,9 @@ function FunZone({ prospects, sections, mode }) {
             </div>
           )})}
           <div style={{marginTop:'10px',display:'flex',gap:'8px',flexWrap:'wrap'}}>
-            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 {mode==='he'?'Sasural':'Mummy'}'s pick: {milChamp.name}</span>
+            <span style={{fontSize:'11px',background:'#E8F5E9',color:'#2E7D32',padding:'3px 10px',borderRadius:'8px'}}>😍 {mode==='he'?'Sasural':'Parents'} pick: {milChamp.name}</span>
             {milSorted.length>1&&<span style={{fontSize:'11px',background:'#FFEBEE',color:'#C62828',padding:'3px 10px',borderRadius:'8px'}}>😬 Toughest sell: {milWorst.name}</span>}
           </div>
-          <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'8px'}}>Formula: (Fun & {mode==='he'?'Sasural':'MIL'} + Family & Values) ÷ 2</div>
         </div>
         
         <div style={{background:'#fff',border:'1px solid rgba(194,24,91,0.13)',borderRadius:'16px',padding:'1.1rem'}}>
