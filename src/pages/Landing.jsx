@@ -5,6 +5,7 @@ const LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfEAAAHQCAYAAACxwlPu
 
 export default function Landing() {
   const [faqOpen, setFaqOpen] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOAuth({
@@ -51,20 +52,49 @@ export default function Landing() {
     <div style={{minHeight:'100vh',background:'#FFFAF8',fontFamily:'DM Sans,sans-serif'}}>
 
       {/* NAV */}
-      <nav style={{padding:'1rem 1.25rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
-        <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
-          <img src={LOGO} style={{width:'36px',height:'36px',objectFit:'contain'}} alt="Rishta Radar" />
+      <nav style={{padding:'1rem 1.5rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
+        <a href="/" style={{display:'flex',alignItems:'center',gap:'12px',textDecoration:'none'}}>
+          <img src={LOGO} style={{width:'40px',height:'40px',objectFit:'contain'}} alt="Rishta Radar" />
           <div>
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:'16px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
-            <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
+            <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
           </div>
         </a>
-        <div style={{display:'flex',alignItems:'center',gap:'1.5rem'}}>
-          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<640?'none':'block'}}>Home</a>
-          <a href="/blog" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<640?'none':'block'}}>Blog</a>
-          <button onClick={handleLogin} style={{padding:'8px 16px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',whiteSpace:'nowrap'}}>Get started →</button>
+        <div style={{display:'flex',alignItems:'center',gap:'2rem',flexShrink:0}}>
+          <div style={{display:window.innerWidth<768?'none':'flex',alignItems:'center',gap:'2rem'}}>
+            <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
+            <a href="/blog" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Blog</a>
+          </div>
+          <button onClick={handleLogin}
+            style={{padding:'8px 18px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<768?'none':'block'}}>
+            Get started →
+          </button>
+          {window.innerWidth < 768 && (
+            <button onClick={()=>setMenuOpen(!menuOpen)}
+              style={{background:'transparent',border:'none',cursor:'pointer',padding:'4px',display:'flex',flexDirection:'column',gap:'5px'}}>
+              <span style={{display:'block',width:'22px',height:'2px',background:'#C2185B',borderRadius:'2px',transition:'all .2s',transform:menuOpen?'rotate(45deg) translate(5px, 5px)':'none'}}></span>
+              <span style={{display:'block',width:'22px',height:'2px',background:'#C2185B',borderRadius:'2px',transition:'all .2s',opacity:menuOpen?0:1}}></span>
+              <span style={{display:'block',width:'22px',height:'2px',background:'#C2185B',borderRadius:'2px',transition:'all .2s',transform:menuOpen?'rotate(-45deg) translate(5px, -5px)':'none'}}></span>
+            </button>
+          )}
         </div>
       </nav>
+      {menuOpen && window.innerWidth < 768 && (
+        <div style={{position:'fixed',top:'73px',left:0,right:0,background:'#fff',borderBottom:'1px solid rgba(194,24,91,0.1)',zIndex:49,padding:'1rem 1.5rem',display:'flex',flexDirection:'column',gap:'1rem',boxShadow:'0 4px 20px rgba(0,0,0,0.08)'}}>
+          <a href="/" onClick={()=>setMenuOpen(false)}
+            style={{fontSize:'15px',color:'#2C1810',textDecoration:'none',fontFamily:'DM Sans,sans-serif',padding:'8px 0',borderBottom:'1px solid rgba(194,24,91,0.08)'}}>
+            🏠 Home
+          </a>
+          <a href="/blog" onClick={()=>setMenuOpen(false)}
+            style={{fontSize:'15px',color:'#2C1810',textDecoration:'none',fontFamily:'DM Sans,sans-serif',padding:'8px 0',borderBottom:'1px solid rgba(194,24,91,0.08)'}}>
+            📝 Blog
+          </a>
+          <button onClick={()=>{setMenuOpen(false); handleLogin()}}
+            style={{padding:'12px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'14px',fontWeight:'500',textAlign:'center'}}>
+            Get started →
+          </button>
+        </div>
+      )}
 
       {/* HERO */}
       <div style={{textAlign:'center',padding:'5rem 2rem 3rem',background:'linear-gradient(135deg,#FFF0F5 0%,#EFF6FF 100%)'}}>
