@@ -132,6 +132,17 @@ function BlogPost({ blog, onBack }) {
 
         <hr style={{border:'none',borderTop:'1px solid #FCE4EC',marginBottom:'2rem'}} />
 
+        <div style={{borderRadius:'16px',overflow:'hidden',marginBottom:'1rem'}}>
+          <img
+            src="https://images.unsplash.com/photo-1542338332-76971ae8c292?q=80&w=800&auto=format&fit=crop"
+            alt="Two people sharing coffee"
+            style={{width:'100%',height:'380px',objectFit:'cover',objectPosition:'center'}}
+          />
+        </div>
+        <div style={{fontSize:'11px',color:'#B39DAE',marginBottom:'2rem',textAlign:'right'}}>
+          Photo by Unsplash
+        </div>
+
         {/* Article content */}
         <div style={{fontSize:'15px',color:'#2C1810',lineHeight:1.9}}>
           {paragraphs.map((para, i) => {
