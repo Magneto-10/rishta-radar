@@ -71,7 +71,11 @@ function BlogList({ onSelect }) {
             <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
           </div>
         </a>
-        <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500'}}>Get started →</a>
+        <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
+          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
+          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
+          <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</a>
+        </div>
       </nav>
 
       {/* Header */}
@@ -117,7 +121,11 @@ function BlogPost({ blog, onBack }) {
             <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
           </div>
         </a>
-        <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500'}}>Get started →</a>
+        <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
+          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
+          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
+          <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</a>
+        </div>
       </nav>
 
       <div style={{maxWidth:'720px',margin:'0 auto',padding:'3rem 2rem'}}>
