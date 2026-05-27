@@ -9,7 +9,7 @@ const blogs = [
     title: 'How to Shortlist the Right Match — A Modern Guide',
     date: 'May 25, 2026',
     readTime: '3 min read',
-    excerpt: "Finding the right life partner through arranged marriage is one of the most important decisions you\'ll ever make. Here\'s a simple, modern approach to shortlisting the right person without losing your mind.",
+    excerpt: "Finding the right life partner through arranged marriage is one of the most important decisions you'll ever make. Here's a simple, modern approach to shortlisting the right person without losing your mind.",
     content: `
 Finding the right life partner through arranged marriage is one of the most important decisions you'll ever make. Yet most of us go through this process with sticky notes, WhatsApp forwards, and a very opinionated extended family.
 
