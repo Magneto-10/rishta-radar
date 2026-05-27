@@ -63,18 +63,18 @@ function BlogList({ onSelect }) {
   return (
     <div style={{minHeight:'100vh',background:'#FFFAF8',fontFamily:'DM Sans,sans-serif'}}>
       {/* Nav */}
-      <nav style={{padding:'1rem 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
-        <a href="/" style={{display:'flex',alignItems:'center',gap:'12px',textDecoration:'none'}}>
-          <img src={LOGO} style={{width:'40px',height:'40px',objectFit:'contain'}} alt="Rishta Radar" />
+      <nav style={{padding:'1rem 1.25rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
+        <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
+          <img src={LOGO} style={{width:'36px',height:'36px',objectFit:'contain'}} alt="Rishta Radar" />
           <div>
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
-            <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'16px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
+            <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
           </div>
         </a>
-        <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
-          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
-          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
-          <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</a>
+        <div style={{display:'flex',alignItems:'center',gap:'1.5rem'}}>
+          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<640?'none':'block'}}>Home</a>
+          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500',display:window.innerWidth<640?'none':'block'}}>Blog</a>
+          <a href="/" style={{padding:'8px 16px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',whiteSpace:'nowrap'}}>Get started →</a>
         </div>
       </nav>
 
@@ -113,18 +113,18 @@ function BlogPost({ blog, onBack }) {
   return (
     <div style={{minHeight:'100vh',background:'#FFFAF8',fontFamily:'DM Sans,sans-serif'}}>
       {/* Nav */}
-      <nav style={{padding:'1rem 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
-        <a href="/" style={{display:'flex',alignItems:'center',gap:'12px',textDecoration:'none'}}>
-          <img src={LOGO} style={{width:'40px',height:'40px',objectFit:'contain'}} alt="Rishta Radar" />
+      <nav style={{padding:'1rem 1.25rem',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid rgba(194,24,91,0.1)',background:'#fff',position:'sticky',top:0,zIndex:50}}>
+        <a href="/" style={{display:'flex',alignItems:'center',gap:'10px',textDecoration:'none'}}>
+          <img src={LOGO} style={{width:'36px',height:'36px',objectFit:'contain'}} alt="Rishta Radar" />
           <div>
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:'18px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
-            <div style={{fontSize:'10px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'16px',color:'#C2185B',lineHeight:1}}>Rishta Radar</div>
+            <div style={{fontSize:'9px',color:'#B39DAE',marginTop:'1px'}}>Your match, your way</div>
           </div>
         </a>
-        <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
-          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
-          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
-          <a href="/" style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</a>
+        <div style={{display:'flex',alignItems:'center',gap:'1.5rem'}}>
+          <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<640?'none':'block'}}>Home</a>
+          <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500',display:window.innerWidth<640?'none':'block'}}>Blog</a>
+          <a href="/" style={{padding:'8px 16px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',whiteSpace:'nowrap'}}>Get started →</a>
         </div>
       </nav>
 
