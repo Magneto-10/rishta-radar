@@ -62,8 +62,7 @@ export default function Landing() {
         <div style={{display:'flex',alignItems:'center',gap:'2rem'}}>
           <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
           <a href="/blog" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Blog</a>
-          <a href="/contact" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Contact</a>
-          <button onClick={handleLogin} style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</button>
+<button onClick={handleLogin} style={{padding:'8px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>Get started →</button>
         </div>
       </nav>
 

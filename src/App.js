@@ -7,7 +7,6 @@ import Onboarding from './pages/Onboarding'
 import { Analytics } from '@vercel/analytics/react'
 import Admin from './pages/Admin'
 import Blog from './pages/Blog'
-import Contact from './pages/Contact'
 
 function LoadingScreen() {
   return (
@@ -74,7 +73,6 @@ export default function App() {
       <Routes>
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<Blog />} />
-        <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={
           loading ? <LoadingScreen /> :
           !session ? <Navigate to="/" /> :
