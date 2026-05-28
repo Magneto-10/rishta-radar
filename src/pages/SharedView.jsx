@@ -105,6 +105,22 @@ export default function SharedView({ shareId }) {
                   </div>
                 </div>
               ))}
+              {(p.famtype || p.famsize || p.parents || p.income || p.cityplan || p.career_plans || p.willing_to_relocate || p.living_arrangement || p.hometown || p.edu || p.height) && (
+                <div style={{marginTop:'12px',paddingTop:'12px',borderTop:`1px solid ${primary}15`}}>
+                  <div style={{fontSize:'10px',fontWeight:'600',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:'8px'}}>Family & Background</div>
+                  {p.edu && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🎓 {p.edu}</div>}
+                  {p.height && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>📏 {p.height}</div>}
+                  {p.hometown && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>📍 From {p.hometown}</div>}
+                  {p.income && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>💰 {p.income}</div>}
+                  {p.famtype && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🏠 {p.famtype}</div>}
+                  {p.famsize && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>👨‍👩‍👧 {p.famsize}</div>}
+                  {p.parents && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>👴 {p.parents}</div>}
+                  {p.cityplan && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🏙️ City plan: {p.cityplan}</div>}
+                  {p.career_plans && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>💼 Career: {p.career_plans}</div>}
+                  {p.willing_to_relocate && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>✈️ Relocation: {p.willing_to_relocate}</div>}
+                  {p.living_arrangement && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🏡 Living: {p.living_arrangement}</div>}
+                </div>
+              )}
             </div>
           ))}
         </div>
