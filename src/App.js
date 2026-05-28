@@ -7,6 +7,12 @@ import Onboarding from './pages/Onboarding'
 import { Analytics } from '@vercel/analytics/react'
 import Admin from './pages/Admin'
 import Blog from './pages/Blog'
+import SharedView from './pages/SharedView'
+
+function SharedViewWrapper() {
+  const shareId = window.location.pathname.split('/share/')[1]
+  return <SharedView shareId={shareId} />
+}
 
 function LoadingScreen() {
   return (
@@ -71,6 +77,7 @@ export default function App() {
     <BrowserRouter>
       <Analytics />
       <Routes>
+        <Route path="/share/:shareId" element={<SharedViewWrapper />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<Blog />} />
         <Route path="/admin" element={

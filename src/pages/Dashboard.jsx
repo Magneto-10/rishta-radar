@@ -686,7 +686,7 @@ export default function Dashboard({ session, mode }) {
           </div>
         )}
 
-        {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} />}
+        {page==='compare' && <CompareView prospects={prospects} sections={sections} cmpSelected={cmpSelected} setCmpSelected={setCmpSelected} cmpQualOpen={cmpQualOpen} setCmpQualOpen={setCmpQualOpen} cmpQuantOpen={cmpQuantOpen} setCmpQuantOpen={setCmpQuantOpen} mode={mode} supabase={supabase} session={session} showToast={showToast} />}
         {page==='funzone' && <FunZone prospects={prospects} sections={sections} mode={mode} />}
         {page==='admin' && session.user.email === 'pranay.dhone1025@gmail.com' && <AdminStats supabase={supabase} />}
         {page==='feedback' && <FeedbackForm session={session} mode={mode} />}
@@ -1166,10 +1166,29 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
 }
 
 // ── COMPARE VIEW ──────────────────────────────────────────────────────────────
-function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen, mode }) {
+function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen, mode, supabase, session, showToast }) {
   const nonElim=prospects.filter(p=>p.status!=='eliminated')
   const active=prospects.filter(p=>cmpSelected.includes(p.id))
   function toggle(id){ if(cmpSelected.includes(id))setCmpSelected(cmpSelected.filter(x=>x!==id));else if(cmpSelected.length<5)setCmpSelected([...cmpSelected,id]);else alert('Max 5');setCmpQualOpen(false);setCmpQuantOpen(false) }
+  async function handleShare() {
+    if (cmpSelected.length < 2) return
+    const shareData = {
+      mode,
+      prospects: active.map(p => ({
+        id: p.id, name: p.name, emoji: p.emoji, color: p.color,
+        overall: gsc(p, sections),
+        sections: sections.map(sec => ({
+          key: sec.key, label: sec.label, icon: sec.icon, color: sec.color,
+          score: Math.round(sec.questions.map(q=>(p.params||{})[q.k]||0).reduce((a,b)=>a+b,0)/sec.questions.length)
+        }))
+      }))
+    }
+    const { data, error } = await supabase.from('shared_comparisons').insert({ user_id: session.user.id, data: shareData }).select('id').single()
+    if (error || !data) { showToast('Failed to create share link', '#C62828'); return }
+    const shareUrl = `${window.location.origin}/share/${data.id}`
+    try { await navigator.clipboard.writeText(shareUrl); showToast('Share link copied! 🔗', '#C2185B') }
+    catch { showToast(`Share: ${shareUrl}`, '#C2185B') }
+  }
   return (
     <div>
       <div style={{marginBottom:'1.25rem'}}><div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810'}}>Head-to-Head</div><div style={{fontSize:'12px',color:'#7B5E6B',marginTop:'3px'}}>Pick up to 5 prospects to compare</div></div>
@@ -1180,6 +1199,7 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
         </div>
         <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
           <button onClick={()=>{setCmpQualOpen(true);setCmpQuantOpen(true)}} disabled={cmpSelected.length<2} style={{padding:'7px 14px',borderRadius:'18px',background:cmpSelected.length<2?'#f5e6ec':'#C2185B',color:cmpSelected.length<2?'#B39DAE':'#fff',border:'none',cursor:cmpSelected.length<2?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px',fontWeight:'500'}}>Compare {cmpSelected.length} prospects</button>
+          <button onClick={handleShare} disabled={cmpSelected.length<2} style={{padding:'7px 14px',borderRadius:'18px',background:cmpSelected.length<2?'#f5f5f5':'#fff',color:cmpSelected.length<2?'#B39DAE':mode==='he'?'#1565C0':'#C2185B',border:`1px solid ${cmpSelected.length<2?'#e0e0e0':mode==='he'?'rgba(21,101,192,0.3)':'rgba(194,24,91,0.3)'}`,cursor:cmpSelected.length<2?'not-allowed':'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px',fontWeight:'500'}}>🔗 Share</button>
           <button onClick={()=>setCmpSelected([])} style={{padding:'7px 14px',borderRadius:'18px',background:'#fff',border:'1px solid rgba(194,24,91,0.13)',color:'#7B5E6B',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px'}}>Clear</button>
           {cmpSelected.length<2&&<span style={{fontSize:'11px',color:'#B39DAE'}}>Pick at least 2</span>}
         </div>
