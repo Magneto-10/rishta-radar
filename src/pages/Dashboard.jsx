@@ -1169,18 +1169,27 @@ function KanbanBoard({ prospects, sections, onMove, onSelect, dragId, setDragId,
 function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQualOpen, setCmpQualOpen, cmpQuantOpen, setCmpQuantOpen, mode, supabase, session, showToast }) {
   const nonElim=prospects.filter(p=>p.status!=='eliminated')
   const active=prospects.filter(p=>cmpSelected.includes(p.id))
+  const [shareUrl, setShareUrl] = React.useState(null)
+  const [shareCopied, setShareCopied] = React.useState(false)
   function toggle(id){ if(cmpSelected.includes(id))setCmpSelected(cmpSelected.filter(x=>x!==id));else if(cmpSelected.length<5)setCmpSelected([...cmpSelected,id]);else alert('Max 5');setCmpQualOpen(false);setCmpQuantOpen(false) }
   async function handleShare() {
     if (cmpSelected.length < 2) return
     const shareId = crypto.randomUUID()
-    const selectedProspects = active.map(p => ({
-      id: p.id, name: p.name, emoji: p.emoji, color: p.color,
-      overall: gsc(p, sections),
-      sections: sections.map(sec => ({
-        key: sec.key, label: sec.label, icon: sec.icon, color: sec.color,
-        score: Math.round(sec.questions.map(q=>(p.params||{})[q.k]||0).reduce((a,b)=>a+b,0)/sec.questions.length)
+    const selectedProspects = prospects
+      .filter(p => cmpSelected.includes(p.id))
+      .map(p => ({
+        name: p.name, age: p.age, city: p.city, hometown: p.hometown,
+        job: p.job, company: p.company, edu: p.edu, height: p.height,
+        famtype: p.famtype, famsize: p.famsize, parents: p.parents,
+        income: p.income, cityplan: p.cityplan,
+        career_plans: p.career_plans, willing_to_relocate: p.willing_to_relocate, living_arrangement: p.living_arrangement,
+        emoji: p.emoji, status: p.status, zodiac: p.zodiac,
+        overallScore: gsc(p, sections),
+        sectionScores: sections.map(sec => ({
+          label: sec.label, icon: sec.icon, color: sec.color,
+          score: secScore(p, sec)
+        }))
       }))
-    }))
     const { error } = await supabase.from('shared_comparisons').insert({
       id: shareId,
       user_id: session.user.id,
@@ -1195,9 +1204,8 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
       alert('Something went wrong. Please try again.')
       return
     }
-    const shareUrl = `${window.location.origin}/share/${shareId}`
-    try { await navigator.clipboard.writeText(shareUrl); showToast('Share link copied! 🔗', '#C2185B') }
-    catch { showToast(`Share: ${shareUrl}`, '#C2185B') }
+    const url = `${window.location.origin}/share/${shareId}`
+    setShareUrl(url)
   }
   return (
     <div>
@@ -1239,6 +1247,35 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
           </table></div>)}
         </div>
       </>)}
+      {shareUrl && (
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.5)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem'}}>
+          <div style={{background:'#fff',borderRadius:'20px',padding:'2rem',maxWidth:'480px',width:'100%',textAlign:'center'}}>
+            <div style={{fontSize:'40px',marginBottom:'1rem'}}>🔗</div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'22px',color:'#2C1810',marginBottom:'8px'}}>Share link ready!</div>
+            <div style={{fontSize:'13px',color:'#7B5E6B',marginBottom:'1.5rem',lineHeight:1.6}}>
+              Share this link with your family. It will expire in 7 days and shows only scores and basic info — no private notes.
+            </div>
+            <div style={{display:'flex',gap:'8px',marginBottom:'1.5rem'}}>
+              <input
+                readOnly
+                value={shareUrl}
+                style={{flex:1,padding:'10px 12px',borderRadius:'10px',border:'1px solid rgba(194,24,91,0.2)',fontFamily:'DM Sans,sans-serif',fontSize:'12px',color:'#2C1810',background:'#FFF0F5'}}
+              />
+              <button onClick={()=>{
+                navigator.clipboard.writeText(shareUrl)
+                setShareCopied(true)
+                setTimeout(()=>setShareCopied(false), 2000)
+              }} style={{padding:'10px 16px',borderRadius:'10px',background:shareCopied?'#2E7D32':'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'12px',fontWeight:'500',whiteSpace:'nowrap',transition:'background .2s'}}>
+                {shareCopied ? '✓ Copied!' : 'Copy'}
+              </button>
+            </div>
+            <button onClick={()=>{setShareUrl(null);setShareCopied(false)}}
+              style={{padding:'8px 24px',borderRadius:'20px',background:'#FFF0F5',color:'#C2185B',border:'none',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontSize:'13px'}}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
