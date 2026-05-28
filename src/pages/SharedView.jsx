@@ -38,7 +38,22 @@ export default function SharedView({ shareId }) {
     </div>
   )
 
-  const { prospects, mode } = shareData
+  const prospects = shareData?.prospects || []
+  const mode = shareData?.mode || 'she'
+  const sharedBy = shareData?.sharedBy || 'Someone'
+
+  if (!prospects || prospects.length === 0) {
+    return (
+      <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#FFFAF8',fontFamily:'DM Sans,sans-serif'}}>
+        <div style={{textAlign:'center'}}>
+          <div style={{fontSize:'48px',marginBottom:'1rem'}}>😕</div>
+          <div style={{fontFamily:'Playfair Display,serif',fontSize:'24px',color:'#2C1810',marginBottom:'8px'}}>No data found</div>
+          <div style={{fontSize:'14px',color:'#7B5E6B'}}>This link may have expired or contains no prospects.</div>
+        </div>
+      </div>
+    )
+  }
+
   const primary = mode === 'he' ? '#1565C0' : '#C2185B'
   const bg = mode === 'he' ? '#F0F4FF' : '#FFFAF8'
   const cols = prospects.length <= 2 ? prospects.length : Math.min(prospects.length, 3)
