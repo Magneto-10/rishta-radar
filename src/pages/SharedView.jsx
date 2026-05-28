@@ -94,19 +94,8 @@ export default function SharedView({ shareId }) {
                   </div>
                 </div>
               </div>
-              {p.sections.map(sec => (
-                <div key={sec.key} style={{marginBottom:'10px'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',fontSize:'11px',marginBottom:'4px'}}>
-                    <span style={{color:'#7B5E6B'}}>{sec.icon} {sec.label}</span>
-                    <span style={{fontWeight:'600',color:sec.color}}>{sec.score}</span>
-                  </div>
-                  <div style={{height:'5px',borderRadius:'4px',background:'#F5F5F5',overflow:'hidden'}}>
-                    <div style={{height:'100%',borderRadius:'4px',background:sec.color,width:`${sec.score}%`,transition:'width .5s ease'}} />
-                  </div>
-                </div>
-              ))}
               {(p.famtype || p.famsize || p.parents || p.income || p.cityplan || p.career_plans || p.willing_to_relocate || p.living_arrangement || p.hometown || p.edu || p.height) && (
-                <div style={{marginTop:'12px',paddingTop:'12px',borderTop:`1px solid ${primary}15`}}>
+                <div style={{marginBottom:'12px',paddingBottom:'12px',borderBottom:`1px solid ${primary}15`}}>
                   <div style={{fontSize:'10px',fontWeight:'600',color:'#B39DAE',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:'8px'}}>Family & Background</div>
                   {p.edu && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🎓 {p.edu}</div>}
                   {p.height && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>📏 {p.height}</div>}
@@ -121,6 +110,33 @@ export default function SharedView({ shareId }) {
                   {p.living_arrangement && <div style={{fontSize:'11px',color:'#7B5E6B',marginBottom:'5px'}}>🏡 Living: {p.living_arrangement}</div>}
                 </div>
               )}
+              {p.sections.map(sec => {
+                const score = sec.score
+                const rating = score >= 80 ? 'Excellent' : score >= 65 ? 'Very Good' : score >= 50 ? 'Good' : score >= 35 ? 'Average' : 'Needs discussion'
+                const ratingColor = score >= 80 ? '#2E7D32' : score >= 65 ? '#1565C0' : score >= 50 ? '#F57F17' : score >= 35 ? '#E65100' : '#C62828'
+                const friendlyLabel = {
+                  'Emotional Quotient': 'How emotionally mature?',
+                  'Family & Values': 'Is family compatible?',
+                  'Financial & Career': 'Is financially stable?',
+                  'Career & Ambition': 'Is career driven?',
+                  'Lifestyle & Compatibility': 'Lifestyle match?',
+                  'Future & Long-term Fit': 'Future goals aligned?',
+                  'Fun & MIL Compatibility': 'Fun & family fit?',
+                  'Fun & Sasural Compatibility': 'Fun & family fit?',
+                }[sec.label] || sec.label
+                return (
+                  <div key={sec.key} style={{marginBottom:'12px'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',fontSize:'11px',marginBottom:'3px'}}>
+                      <span style={{color:'#7B5E6B'}}>{sec.icon} {friendlyLabel}</span>
+                      <span style={{fontWeight:'600',color:sec.color}}>{score}/100</span>
+                    </div>
+                    <div style={{height:'5px',borderRadius:'4px',background:'#F5F5F5',overflow:'hidden',marginBottom:'3px'}}>
+                      <div style={{height:'100%',borderRadius:'4px',background:sec.color,width:`${score}%`,transition:'width .5s ease'}} />
+                    </div>
+                    <div style={{fontSize:'10px',fontWeight:'600',color:ratingColor,textAlign:'right'}}>{rating}</div>
+                  </div>
+                )
+              })}
             </div>
           ))}
         </div>
