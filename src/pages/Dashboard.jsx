@@ -1172,20 +1172,30 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
   function toggle(id){ if(cmpSelected.includes(id))setCmpSelected(cmpSelected.filter(x=>x!==id));else if(cmpSelected.length<5)setCmpSelected([...cmpSelected,id]);else alert('Max 5');setCmpQualOpen(false);setCmpQuantOpen(false) }
   async function handleShare() {
     if (cmpSelected.length < 2) return
-    const shareData = {
-      mode,
-      prospects: active.map(p => ({
-        id: p.id, name: p.name, emoji: p.emoji, color: p.color,
-        overall: gsc(p, sections),
-        sections: sections.map(sec => ({
-          key: sec.key, label: sec.label, icon: sec.icon, color: sec.color,
-          score: Math.round(sec.questions.map(q=>(p.params||{})[q.k]||0).reduce((a,b)=>a+b,0)/sec.questions.length)
-        }))
+    const shareId = crypto.randomUUID()
+    const selectedProspects = active.map(p => ({
+      id: p.id, name: p.name, emoji: p.emoji, color: p.color,
+      overall: gsc(p, sections),
+      sections: sections.map(sec => ({
+        key: sec.key, label: sec.label, icon: sec.icon, color: sec.color,
+        score: Math.round(sec.questions.map(q=>(p.params||{})[q.k]||0).reduce((a,b)=>a+b,0)/sec.questions.length)
       }))
+    }))
+    const { error } = await supabase.from('shared_comparisons').insert({
+      id: shareId,
+      user_id: session.user.id,
+      data: {
+        prospects: selectedProspects,
+        mode,
+        sharedBy: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Someone'
+      }
+    })
+    if (error) {
+      console.log('Share error details:', JSON.stringify(error))
+      alert('Something went wrong. Please try again.')
+      return
     }
-    const { data, error } = await supabase.from('shared_comparisons').insert({ user_id: session.user.id, data: shareData }).select('id').single()
-    if (error || !data) { showToast('Failed to create share link', '#C62828'); return }
-    const shareUrl = `${window.location.origin}/share/${data.id}`
+    const shareUrl = `${window.location.origin}/share/${shareId}`
     try { await navigator.clipboard.writeText(shareUrl); showToast('Share link copied! 🔗', '#C2185B') }
     catch { showToast(`Share: ${shareUrl}`, '#C2185B') }
   }
