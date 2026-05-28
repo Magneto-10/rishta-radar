@@ -9,13 +9,28 @@ export default function SharedView({ shareId }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (!shareId) { setError('Invalid share link'); setLoading(false); return }
-    supabase.from('shared_comparisons').select('data').eq('id', shareId).single()
-      .then(({ data: row, error: err }) => {
-        if (err || !row) setError('This comparison was not found or has been deleted.')
-        else setShareData(row.data)
+    async function fetchSharedData() {
+      setLoading(true)
+      const { data: share, error } = await supabase
+        .from('shared_comparisons')
+        .select('*')
+        .eq('id', shareId)
+        .single()
+      if (error || !share) {
+        setError('This link has expired or is invalid.')
         setLoading(false)
-      })
+        return
+      }
+      if (!share.data || !share.data.prospects || share.data.prospects.length === 0) {
+        setError('No prospects found in this share link.')
+        setLoading(false)
+        return
+      }
+      setShareData(share.data)
+      setLoading(false)
+    }
+    if (!shareId) { setError('Invalid share link'); setLoading(false); return }
+    fetchSharedData()
   }, [shareId])
 
   if (loading) return (
@@ -38,9 +53,9 @@ export default function SharedView({ shareId }) {
     </div>
   )
 
-  const prospects = shareData?.prospects || []
-  const mode = shareData?.mode || 'she'
-  const sharedBy = shareData?.sharedBy || 'Someone'
+  const prospects = shareData.prospects
+  const mode = shareData.mode || 'she'
+  const sharedBy = shareData.sharedBy || 'Someone'
 
   if (!prospects || prospects.length === 0) {
     return (
@@ -67,7 +82,7 @@ export default function SharedView({ shareId }) {
           <div style={{fontSize:'13px',color:'#7B5E6B'}}>Shared by {sharedBy} · Expires in 7 days · Private link</div>
         </div>
         <div style={{display:'grid',gridTemplateColumns:`repeat(${cols},1fr)`,gap:'1rem'}}>
-          {prospects.map((p, idx) => (
+          {(prospects || []).map((p, idx) => (
             <div key={p.id} style={{background:'#fff',borderRadius:'16px',padding:'1.25rem',border:`1px solid ${primary}22`,boxShadow:'0 2px 12px rgba(0,0,0,0.06)'}}>
               <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1rem',paddingBottom:'0.75rem',borderBottom:`1px solid ${primary}15`}}>
                 <span style={{fontSize:'30px'}}>{p.emoji}</span>
