@@ -1184,9 +1184,9 @@ function CompareView({ prospects, sections, cmpSelected, setCmpSelected, cmpQual
         income: p.income, cityplan: p.cityplan,
         career_plans: p.career_plans, willing_to_relocate: p.willing_to_relocate, living_arrangement: p.living_arrangement,
         emoji: p.emoji, status: p.status, zodiac: p.zodiac,
-        overallScore: gsc(p, sections),
-        sectionScores: sections.map(sec => ({
-          label: sec.label, icon: sec.icon, color: sec.color,
+        overall: gsc(p, sections),
+        sections: sections.map(sec => ({
+          key: sec.key, label: sec.label, icon: sec.icon, color: sec.color,
           score: secScore(p, sec)
         }))
       }))
