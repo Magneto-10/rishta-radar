@@ -64,7 +64,7 @@ export default function SharedView({ shareId }) {
         <div style={{textAlign:'center',marginBottom:'2rem',paddingTop:'1rem'}}>
           <img src={LOGO} alt="Rishta Radar" style={{height:'36px',marginBottom:'0.75rem'}} />
           <div style={{fontSize:'22px',fontFamily:'Playfair Display,serif',color:'#2C1810',marginBottom:'4px'}}>Head-to-Head Comparison</div>
-          <div style={{fontSize:'12px',color:'#7B5E6B'}}>Shared via Rishta Radar</div>
+          <div style={{fontSize:'13px',color:'#7B5E6B'}}>Shared by {sharedBy} · Expires in 7 days · Private link</div>
         </div>
         <div style={{display:'grid',gridTemplateColumns:`repeat(${cols},1fr)`,gap:'1rem'}}>
           {prospects.map((p, idx) => (
