@@ -219,16 +219,16 @@ export default function Landing() {
             </div>
 
             {/* Pedia Treats */}
-            <div style={{background:'#22215B',border:'2px solid #2E7D3222',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
+            <div style={{background:'#F5F0FF',border:'2px solid #CECBF6',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
               <img src="/pedia-treats-logo.png"
                 alt="Pedia Treats"
                 style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}}
                 onError={e=>e.target.style.display='none'}
               />
-              <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#ffffff',marginBottom:'6px'}}>Pedia Treats</div>
-              <div style={{fontSize:'13px',color:'#c0bde8',lineHeight:1.6,marginBottom:'1.25rem'}}>Nurturing your child's growth, milestone by milestone.</div>
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#3C3489',marginBottom:'6px'}}>Pedia Treats</div>
+              <div style={{fontSize:'13px',color:'#534AB7',lineHeight:1.6,marginBottom:'1.25rem'}}>Nurturing your child's growth, milestone by milestone.</div>
               <a href="https://pediatreats.com" target="_blank" rel="noopener noreferrer"
-                style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#2E7D32',color:'#fff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',textDecoration:'none'}}>
+                style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#534AB7',color:'#ffffff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',textDecoration:'none'}}>
                 Visit app →
               </a>
             </div>
