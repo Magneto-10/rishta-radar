@@ -209,24 +209,24 @@ export default function Landing() {
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'1.5rem'}}>
 
             {/* Rishta Radar */}
-            <div style={{background:'#FFFAF8',border:'2px solid #C2185B22',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
+            <div style={{background:'#FFFAF8',border:'2px solid #C2185B22',borderRadius:'20px',padding:'2rem',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center'}}>
               <img src={LOGO} alt="Rishta Radar" style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}} />
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#C2185B',marginBottom:'6px'}}>Rishta Radar</div>
-              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem'}}>Find your perfect match, your way.</div>
+              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem',flex:1}}>Find your perfect match, your way.</div>
               <span style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>
                 ✓ You're here!
               </span>
             </div>
 
             {/* Pedia Treats */}
-            <div style={{background:'#F5F0FF',border:'2px solid #CECBF6',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
+            <div style={{background:'#F5F0FF',border:'2px solid #CECBF6',borderRadius:'20px',padding:'2rem',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center'}}>
               <img src="/pedia-treats-logo.png"
                 alt="Pedia Treats"
                 style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}}
                 onError={e=>e.target.style.display='none'}
               />
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#3C3489',marginBottom:'6px'}}>Pedia Treats</div>
-              <div style={{fontSize:'13px',color:'#534AB7',lineHeight:1.6,marginBottom:'1.25rem'}}>Nurturing your child's growth, milestone by milestone.</div>
+              <div style={{fontSize:'13px',color:'#534AB7',lineHeight:1.6,marginBottom:'1.25rem',flex:1}}>Nurturing your child's growth, milestone by milestone.</div>
               <a href="https://pediatreats.com" target="_blank" rel="noopener noreferrer"
                 style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#534AB7',color:'#ffffff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',textDecoration:'none'}}>
                 Visit app →
@@ -234,12 +234,12 @@ export default function Landing() {
             </div>
 
             {/* Pregnancy Tracker */}
-            <div style={{background:'#FFF8F0',border:'2px solid #E6510022',borderRadius:'20px',padding:'2rem',textAlign:'center',opacity:0.85}}>
+            <div style={{background:'#FFF8F0',border:'2px solid #E6510022',borderRadius:'20px',padding:'2rem',textAlign:'center',opacity:0.85,display:'flex',flexDirection:'column',alignItems:'center'}}>
               <div style={{width:'72px',height:'72px',borderRadius:'50%',background:'linear-gradient(135deg,#FFE0B2,#FFCCBC)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 1rem',fontSize:'32px'}}>
                 🤰
               </div>
               <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#E65100',marginBottom:'6px'}}>Pregnancy Tracker</div>
-              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem'}}>Your pregnancy journey, beautifully tracked.</div>
+              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem',flex:1}}>Your pregnancy journey, beautifully tracked.</div>
               <span style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#FFF3E0',color:'#E65100',border:'1px solid #E6510033',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>
                 🕐 Coming Soon
               </span>
