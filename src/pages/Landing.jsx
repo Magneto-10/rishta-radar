@@ -220,7 +220,7 @@ export default function Landing() {
 
             {/* Pedia Treats */}
             <div style={{background:'#F0FFF4',border:'2px solid #2E7D3222',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
-              <img src="https://storage.googleapis.com/btris-master/profileAvatars/pedia-treats-logo.png"
+              <img src="/pedia-treats-logo.png"
                 alt="Pedia Treats"
                 style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}}
                 onError={e=>e.target.style.display='none'}
