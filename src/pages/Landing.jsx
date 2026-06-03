@@ -196,6 +196,59 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Family Ecosystem Section */}
+      <div style={{background:'#fff',padding:'4rem 2rem'}}>
+        <div style={{maxWidth:'1000px',margin:'0 auto'}}>
+          <div style={{textAlign:'center',marginBottom:'3rem'}}>
+            <h2 style={{fontFamily:'Playfair Display,serif',fontSize:'32px',color:'#2C1810',marginBottom:'.5rem'}}>
+              The Family Ecosystem
+            </h2>
+            <p style={{fontSize:'14px',color:'#7B5E6B'}}>Apps built for every stage of your family journey</p>
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'1.5rem'}}>
+
+            {/* Rishta Radar */}
+            <div style={{background:'#FFFAF8',border:'2px solid #C2185B22',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
+              <img src={LOGO} alt="Rishta Radar" style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}} />
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#C2185B',marginBottom:'6px'}}>Rishta Radar</div>
+              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem'}}>Find your perfect match, your way.</div>
+              <span style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#C2185B',color:'#fff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>
+                ✓ You're here!
+              </span>
+            </div>
+
+            {/* Pedia Treats */}
+            <div style={{background:'#F0FFF4',border:'2px solid #2E7D3222',borderRadius:'20px',padding:'2rem',textAlign:'center'}}>
+              <img src="https://storage.googleapis.com/btris-master/profileAvatars/pedia-treats-logo.png"
+                alt="Pedia Treats"
+                style={{width:'72px',height:'72px',objectFit:'contain',marginBottom:'1rem'}}
+                onError={e=>e.target.style.display='none'}
+              />
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#2E7D32',marginBottom:'6px'}}>Pedia Treats</div>
+              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem'}}>Nurturing your child's growth, milestone by milestone.</div>
+              <a href="https://pediatreats.com" target="_blank" rel="noopener noreferrer"
+                style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#2E7D32',color:'#fff',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',textDecoration:'none'}}>
+                Visit app →
+              </a>
+            </div>
+
+            {/* Pregnancy Tracker */}
+            <div style={{background:'#FFF8F0',border:'2px solid #E6510022',borderRadius:'20px',padding:'2rem',textAlign:'center',opacity:0.85}}>
+              <div style={{width:'72px',height:'72px',borderRadius:'50%',background:'linear-gradient(135deg,#FFE0B2,#FFCCBC)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 1rem',fontSize:'32px'}}>
+                🤰
+              </div>
+              <div style={{fontFamily:'Playfair Display,serif',fontSize:'20px',color:'#E65100',marginBottom:'6px'}}>Pregnancy Tracker</div>
+              <div style={{fontSize:'13px',color:'#7B5E6B',lineHeight:1.6,marginBottom:'1.25rem'}}>Your pregnancy journey, beautifully tracked.</div>
+              <span style={{display:'inline-block',padding:'7px 20px',borderRadius:'20px',background:'#FFF3E0',color:'#E65100',border:'1px solid #E6510033',fontSize:'12px',fontWeight:'500',fontFamily:'DM Sans,sans-serif'}}>
+                🕐 Coming Soon
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       {/* CTA BANNER */}
       <div style={{background:'linear-gradient(135deg,#FFF0F5,#EFF6FF)',padding:'4rem 2rem',textAlign:'center'}}>
         <h2 style={{fontFamily:'Playfair Display,serif',fontSize:'32px',color:'#2C1810',marginBottom:'1rem'}}>Ready to find your match?</h2>
