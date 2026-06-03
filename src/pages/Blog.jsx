@@ -76,6 +76,7 @@ function BlogList({ onSelect }) {
           <div style={{display:window.innerWidth<768?'none':'flex',alignItems:'center',gap:'2rem'}}>
             <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
             <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
+            <a href="/#ecosystem" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Ecosystem</a>
           </div>
           <a href="/" style={{padding:'8px 18px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<768?'none':'block'}}>Get started →</a>
           {window.innerWidth < 768 && (
@@ -152,6 +153,7 @@ function BlogPost({ blog, onBack }) {
           <div style={{display:window.innerWidth<768?'none':'flex',alignItems:'center',gap:'2rem'}}>
             <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
             <a href="/blog" style={{fontSize:'14px',color:'#C2185B',textDecoration:'none',fontFamily:'DM Sans,sans-serif',fontWeight:'500'}}>Blog</a>
+            <a href="/#ecosystem" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Ecosystem</a>
           </div>
           <a href="/" style={{padding:'8px 18px',borderRadius:'20px',background:'#C2185B',color:'#fff',textDecoration:'none',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<768?'none':'block'}}>Get started →</a>
           {window.innerWidth < 768 && (
