@@ -64,7 +64,7 @@ export default function Landing() {
           <div style={{display:window.innerWidth<768?'none':'flex',alignItems:'center',gap:'2rem'}}>
             <a href="/" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Home</a>
             <a href="/blog" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}}>Blog</a>
-            <a href="#ecosystem" style={{color:'#2C1810', textDecoration:'none', fontSize:'15px', fontFamily:'DM Sans, sans-serif'}} onClick={(e) => { e.preventDefault(); document.getElementById('ecosystem').scrollIntoView({behavior:'smooth'}); }}>Ecosystem</a>
+            <a href="#ecosystem" style={{fontSize:'14px',color:'#7B5E6B',textDecoration:'none',fontFamily:'DM Sans,sans-serif'}} onClick={(e) => { e.preventDefault(); document.getElementById('ecosystem').scrollIntoView({behavior:'smooth'}); }}>Ecosystem</a>
           </div>
           <button onClick={handleLogin}
             style={{padding:'8px 18px',borderRadius:'20px',background:'#C2185B',color:'#fff',border:'none',cursor:'pointer',fontSize:'13px',fontWeight:'500',fontFamily:'DM Sans,sans-serif',display:window.innerWidth<768?'none':'block'}}>
