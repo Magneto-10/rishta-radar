@@ -198,9 +198,15 @@ function BlogList({ onSelect }) {
   )
 }
 
+const renderContent = (text) => {
+  return text.split('\n').map((line, i) => {
+    const formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return <p key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
+  });
+};
+
 function BlogPost({ blog, onBack }) {
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const paragraphs = blog.content.trim().split('\n\n')
 
   return (
     <div style={{minHeight:'100vh',background:'#FFFAF8',fontFamily:'DM Sans,sans-serif'}}>
@@ -281,18 +287,7 @@ function BlogPost({ blog, onBack }) {
 
         {/* Article content */}
         <div style={{fontSize:'15px',color:'#2C1810',lineHeight:1.9}}>
-          {paragraphs.map((para, i) => {
-            if (para.startsWith('## ')) {
-              return <h2 key={i} style={{fontFamily:'Playfair Display,serif',fontSize:'22px',color:'#2C1810',marginTop:'2rem',marginBottom:'1rem'}}>{para.replace('## ','')}</h2>
-            }
-            if (para.startsWith('- ')) {
-              const items = para.split('\n').filter(l=>l.startsWith('- '))
-              return <ul key={i} style={{paddingLeft:'1.5rem',marginBottom:'1rem',color:'#4A3540'}}>
-                {items.map((item,j)=><li key={j} style={{marginBottom:'6px'}}>{item.replace('- ','')}</li>)}
-              </ul>
-            }
-            return <p key={i} style={{marginBottom:'1.25rem',color:'#4A3540'}}>{para}</p>
-          })}
+          {renderContent(blog.content)}
         </div>
 
         {/* CTA */}
