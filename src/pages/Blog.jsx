@@ -9,6 +9,7 @@ const blogs = [
     title: 'How to Shortlist the Right Match — A Modern Guide',
     date: 'May 25, 2026',
     readTime: '3 min read',
+    image: 'https://images.unsplash.com/photo-1542338332-76971ae8c292?q=80&w=800&auto=format&fit=crop',
     excerpt: "Finding the right life partner through arranged marriage is one of the most important decisions you'll ever make. Here's a simple, modern approach to shortlisting the right person without losing your mind.",
     content: `
 Finding the right life partner through arranged marriage is one of the most important decisions you'll ever make. Yet most of us go through this process with sticky notes, WhatsApp forwards, and a very opinionated extended family.
@@ -63,6 +64,7 @@ The best approach is to rate each person across what matters most — emotional 
     title: 'How to Have the "Expectations" Talk Before Saying Yes',
     date: 'June 11, 2026',
     readTime: '4 min read',
+    image: 'https://plus.unsplash.com/premium_photo-1745318203783-6d242dd0d29a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     excerpt: "Before you say yes, there's one conversation most couples skip — and regret later. Here's how to have the expectations talk without making it feel like a job interview.",
     content: `
 You've met a few times. Things feel right. But before you say yes, there's one conversation most couples skip — and regret later.
@@ -251,7 +253,7 @@ function BlogPost({ blog, onBack }) {
 
         <div style={{borderRadius:'16px',overflow:'hidden',marginBottom:'1rem'}}>
           <img
-            src="https://images.unsplash.com/photo-1542338332-76971ae8c292?q=80&w=800&auto=format&fit=crop"
+            src={blog.image}
             alt="Two people sharing coffee"
             style={{width:'100%',height:'380px',objectFit:'cover',objectPosition:'center'}}
           />
