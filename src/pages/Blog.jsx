@@ -56,6 +56,61 @@ When you're evaluating multiple people, feelings alone can mislead you. Someone 
 
 The best approach is to rate each person across what matters most — emotional maturity, family values, career mindset, lifestyle, future goals — and then compare them side by side with a clear head.
     `
+  },
+  {
+    id: 2,
+    slug: 'expectations-talk-before-saying-yes',
+    title: 'How to Have the "Expectations" Talk Before Saying Yes',
+    date: 'June 11, 2026',
+    readTime: '4 min read',
+    excerpt: "Before you say yes, there's one conversation most couples skip — and regret later. Here's how to have the expectations talk without making it feel like a job interview.",
+    content: `
+You've met a few times. Things feel right. But before you say yes, there's one conversation most couples skip — and regret later.
+
+The expectations talk.
+
+Not the awkward "what are your hobbies" kind. The real one. Where you both lay out what you actually want from life, from a partner, and from this marriage.
+
+Here's how to have it without making it feel like a job interview.
+
+## Why Most Couples Skip It
+
+In arranged marriages, there's often pressure to decide quickly. Families are involved. Everyone's watching. Saying "I need more time to talk" can feel like hesitation or even rejection.
+
+So people nod along, assume they're aligned, and figure the rest will sort itself out. Sometimes it does. Often it doesn't.
+
+## What to Actually Cover
+
+**Where you'll live.** Will it be with family, near family, or independently? This one causes more friction than people expect. Get specific.
+
+**Career and ambitions.** Is your partner supportive of yours? Do their ambitions fit with the life you imagine? A partner who expects you to quit your job after marriage is a very different proposition from one who doesn't.
+
+**Children — if and when.** Not just whether, but how many, and roughly when. It's okay not to have a fixed answer, but knowing if you're in the same ballpark matters.
+
+**Money.** Who manages it? Are you combining finances or keeping them separate? What does financial security mean to each of you?
+
+**Family dynamics.** How involved will both sets of parents be? What does "family first" mean to them versus you?
+
+## How to Bring It Up Naturally
+
+You don't need to schedule a formal "talk." Weave it into a normal conversation.
+
+"I've been thinking about what the first year of marriage looks like practically — have you thought about that?"
+
+"My work means a lot to me. How do you see that fitting in?"
+
+"What does a typical Sunday look like in your ideal life?"
+
+These questions feel natural and open up the real conversation.
+
+## What Misalignment Actually Looks Like
+
+It's rarely dramatic. It's usually one person assuming the other will adjust — and neither having said anything clearly. The expectations talk isn't about finding someone who agrees with everything you want. It's about knowing where you're different early enough to decide if you can work with it.
+
+## One Last Thing
+
+If someone gets defensive or dismissive when you ask these questions, that itself is useful information. The right person won't mind being asked. They'll be relieved you brought it up.
+    `
   }
 ]
 
