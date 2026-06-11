@@ -200,8 +200,17 @@ function BlogList({ onSelect }) {
 
 const renderContent = (text) => {
   return text.split('\n').map((line, i) => {
+    if (line.startsWith('# ')) {
+      return <h1 key={i} style={{ fontSize: '28px', fontWeight: '700', fontFamily: 'Playfair Display, serif', margin: '1.5rem 0 0.75rem' }}>{line.replace('# ', '')}</h1>;
+    }
+    if (line.startsWith('## ')) {
+      return <h2 key={i} style={{ fontSize: '22px', fontWeight: '600', fontFamily: 'Playfair Display, serif', color: '#C2185B', margin: '1.25rem 0 0.5rem' }}>{line.replace('## ', '')}</h2>;
+    }
+    if (line.startsWith('### ')) {
+      return <h3 key={i} style={{ fontSize: '18px', fontWeight: '600', fontFamily: 'DM Sans, sans-serif', color: '#444', margin: '1rem 0 0.5rem' }}>{line.replace('### ', '')}</h3>;
+    }
     const formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    return <p key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
+    return line.trim() ? <p key={i} style={{ lineHeight: '1.8', marginBottom: '0.75rem' }} dangerouslySetInnerHTML={{ __html: formatted }} /> : null;
   });
 };
 
