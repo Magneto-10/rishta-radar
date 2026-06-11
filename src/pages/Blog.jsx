@@ -64,7 +64,7 @@ The best approach is to rate each person across what matters most — emotional 
     title: 'How to Have the "Expectations" Talk Before Saying Yes',
     date: 'June 11, 2026',
     readTime: '4 min read',
-    image: 'https://plus.unsplash.com/premium_photo-1745318203783-6d242dd0d29a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&auto=format&fit=crop',
     excerpt: "Before you say yes, there's one conversation most couples skip — and regret later. Here's how to have the expectations talk without making it feel like a job interview.",
     content: `
 You've met a few times. Things feel right. But before you say yes, there's one conversation most couples skip — and regret later.
