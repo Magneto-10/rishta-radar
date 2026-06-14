@@ -4,5 +4,13 @@
       "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.rishtaradar.in" }],
+      "destination": "https://rishtaradar.in/:path*",
+      "permanent": true
+    }
   ]
 }
